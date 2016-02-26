@@ -8,11 +8,6 @@ public class driver {
 		
 		System.out.println("Hello World");
 
-		node testNode = new node("test");
-		testNode.setLeft(new node("left"));
-		testNode.setRight(new node("right"));
-		testNode.getLeft().setRight(new node("right node of left"));
-		System.out.println(testNode.toString());
-	}
+		}
 
 }

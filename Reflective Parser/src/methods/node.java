@@ -1,66 +1,57 @@
 package methods;
 
+import java.util.ArrayList;
+
 public class node {
 
-	String data;
-	node left;
-	node right;
+	private ParseGrammer.Expr expression;
+	private ArrayList <node> sub_expr;
 	
-	public node(String data) {
-		this.data = data;
-		this.left = null;
-		this.right = null;
+	public node(ParseGrammer.Expr expression) {
+		this.expression = expression;
+		this.sub_expr = new ArrayList<node>();
 	}
 
-	public node(String data, node left, node right) {
-		this.data = data;
-		this.left = left;
-		this.right = right;
+	public Object getExpression() {
+		return this.expression;
 	}
 
-	public Object getData() {
-		return data;
+	public void setFunCall(ParseGrammer.Expr expression) {
+		this.expression = expression;
 	}
 
-	public void setData(String data) {
-		this.data = data;
+	public int numExpressions ()
+	{
+		return sub_expr.size();
 	}
 
-	public node getLeft() {
-		return left;
+	public void addExpression(node newExpression)
+	{
+		this.sub_expr.add(newExpression);
 	}
-
-	public void setLeft(node left) {
-		this.left = left;
-	}
-
-	public node getRight() {
-		return right;
-	}
-
-	public void setRight(node right) {
-		this.right = right;
+	
+	public node getExpression(int index)
+	{
+		if(sub_expr.isEmpty())
+			return this.sub_expr.get(index);
+		else return null;
 	}
 	
 	public String toString ()
 	{
-		String nodeString = this.data.toString();
+		String nodeString = this.expression.toString();
 		
-		if(this.left != null)
-			nodeString += "\n(Left Node: " + this.left.toString() + ")";
-		if(this.right != null)
-			nodeString += "\n(Right Node: " + this.right.toString() + ")";
-
+		for(node n: this.sub_expr)
+			nodeString = nodeString + '\n' + n.toString(); 
+			
 		return nodeString; 
 	}
 	
 	public int getSize()
 	{
 		int size = 1;
-		if (this.left != null)
-			size += this.left.getSize();
-		if (this.right != null)
-			size += this.right.getSize();
+		for(node n: this.sub_expr)
+			size += n.getSize();
 		return size;
 	}
 	
