@@ -1,10 +1,10 @@
 package methods;
 
-public class parseTree {
+public class ParseTree {
 
-	node head;
+	Node head;
 
-	public parseTree(node head) {
+	public ParseTree(Node head) {
 		super();
 		this.head = head;
 	}

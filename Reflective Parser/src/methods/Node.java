@@ -2,14 +2,14 @@ package methods;
 
 import java.util.ArrayList;
 
-public class node {
+public class Node {
 
 	private ParseGrammer.Expr expression;
-	private ArrayList <node> sub_expr;
+	private ArrayList <Node> sub_expr;
 	
-	public node(ParseGrammer.Expr expression) {
+	public Node(ParseGrammer.Expr expression) {
 		this.expression = expression;
-		this.sub_expr = new ArrayList<node>();
+		this.sub_expr = new ArrayList<Node>();
 	}
 
 	public Object getExpression() {
@@ -25,12 +25,12 @@ public class node {
 		return sub_expr.size();
 	}
 
-	public void addExpression(node newExpression)
+	public void addExpression(Node newExpression)
 	{
 		this.sub_expr.add(newExpression);
 	}
 	
-	public node getExpression(int index)
+	public Node getExpression(int index)
 	{
 		if(sub_expr.isEmpty())
 			return this.sub_expr.get(index);
@@ -41,7 +41,7 @@ public class node {
 	{
 		String nodeString = this.expression.toString();
 		
-		for(node n: this.sub_expr)
+		for(Node n: this.sub_expr)
 			nodeString = nodeString + '\n' + n.toString(); 
 			
 		return nodeString; 
@@ -50,7 +50,7 @@ public class node {
 	public int getSize()
 	{
 		int size = 1;
-		for(node n: this.sub_expr)
+		for(Node n: this.sub_expr)
 			size += n.getSize();
 		return size;
 	}
