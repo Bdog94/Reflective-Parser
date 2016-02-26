@@ -6,6 +6,19 @@ public class ParseGrammer {
 		Funcall funCall;
 		Value value;
 		
+		public Funcall getFunCall() {
+			return funCall;
+		}
+		public void setFunCall(Funcall funCall) {
+			this.funCall = funCall;
+		}
+		public Value getValue() {
+			return value;
+		}
+		public void setValue(Value value) {
+			this.value = value;
+		}
+		
 		/*
 		 * Does not contain any functionality right now
 		 */
@@ -34,6 +47,24 @@ public class ParseGrammer {
 		int val_int;
 		float val_float;
 		String val_string;
+		
+		
+		
+		public float getVal_float() {
+			return val_float;
+		}
+
+		public void setVal_float(float val_float) {
+			this.val_float = val_float;
+		}
+
+		public String getVal_string() {
+			return val_string;
+		}
+
+		public void setVal_string(String val_string) {
+			this.val_string = val_string;
+		}
 		
 		/*
 		 * No functionality currently
