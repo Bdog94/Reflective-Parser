@@ -1,9 +1,24 @@
 package methods;
 import java.lang.reflect.*;
-import java.awt.*;
+import java.io.*;
+/**
+ * 
+ * @author Bernie Mayer
+ *
+ */
 public class Reflection {
 	
-
+	public static void main(String[] args) {
+		
+		
+		
+		loadClass("Commands.java");
+		
+	}
+	/**
+	 * 
+	 * @param o
+	 */
 	
 	static void showConstructors(Object o)
 	{
@@ -20,6 +35,11 @@ public class Reflection {
 			System.out.println(")");
 		}
 	}
+	
+	/**
+	 * 
+	 * @param o
+	 */
 		
 	static void printFieldNames(Object o) {
 		Class c = o.getClass();
@@ -34,6 +54,10 @@ public class Reflection {
 		}
 		
 		}
+	/**
+	 * 
+	 * @param o
+	 */
 	static void printFuncalls(Object o){
 		Class c = o.getClass();
 		Method[] methods = c.getMethods();
@@ -50,9 +74,22 @@ public class Reflection {
 				String parameterString = parameterTypes[k].getName();
 				System.out.print(parameterString + " ");
 			}
-			System.out.println(") : " + returnString);
+			System.out.println("): " + returnString);
 			
 			
+		}
+	}
+	/**
+	 * 
+	 * @param filename
+	 */
+	static void loadClass(String filename){
+		try {
+			RandomAccessFile r = new RandomAccessFile(filename, "r");
+			printFuncalls(r);
+			
+		} catch (IOException e){
+			System.out.println(e);
 		}
 	}
 	
