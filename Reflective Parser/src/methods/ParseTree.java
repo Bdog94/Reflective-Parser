@@ -1,19 +1,35 @@
 package methods;
 
+/**
+ * 
+ * @author Kyle Perry`
+ *
+ */
 public class ParseTree {
 
 	Node head;
 
+	/**
+	 * 
+	 * @param head
+	 */
 	public ParseTree(Node head) {
 		super();
 		this.head = head;
 	}
 	
+	/**
+	 * 
+	 */
 	public String toString()
 	{
 		return this.head.toString();
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public int getTreeSize()
 	{
 		if (head == null)
