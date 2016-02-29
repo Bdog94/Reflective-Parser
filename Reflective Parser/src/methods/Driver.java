@@ -192,5 +192,7 @@ public class Driver {
 			} catch(Exception ex) {
 				return false; // If exceptions somehow occur we return false
 			}
+
 		}
+}
 

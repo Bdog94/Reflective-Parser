@@ -11,8 +11,8 @@ public class Debug {
 	}
 	static boolean  isVerbose = false;
 	
-	public void setIsDebug(boolean aDebug){ isDebug = aDebug;}
-	public void setIsVerbose(boolean aVerbose){ isVerbose = aVerbose;}
+	public static void setIsDebug(boolean aDebug){ isDebug = aDebug;}
+	public static void setIsVerbose(boolean aVerbose){ isVerbose = aVerbose;}
 	
 	
 
