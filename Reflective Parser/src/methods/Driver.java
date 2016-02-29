@@ -60,7 +60,6 @@ public class Driver {
 	
 	public static void argCheck(String[] args){
 		LoadedJar loader = new LoadedJar();
-		Debug debugger = new Debug();
 		
 		//This block of code is embedded in a try catch to keep track of non-fatal errors
 		try {
@@ -80,7 +79,7 @@ public class Driver {
 			} 
 			else if (((args[0].equals("-v") || args[0].equals("--verbose")) && args[1].contains(".jar") && args.length == 3)
 					|| (args[0].equals("-v") || args[0].equals("--verbose")) && args[1].contains(".jar") && args.length == 2){
-				debugger.setIsVerbose(true);
+				Debug.setIsVerbose(true);
 				System.out.println("Running in verbose mode...");		
 				if (jarValid(args[1])) { // Check if jar file is valid
 					if (args.length == 2) {  // Check if defaulted "Commands" class is in the jar file
@@ -108,7 +107,7 @@ public class Driver {
 			//if calls for merely the jar file
 			} 
 			else if ((args[0].contains(".jar") && args.length == 2) || (args[0].contains(".jar") && args.length == 1)) {
-				debugger.setIsVerbose(false);
+				Debug.setIsVerbose(false);
 				if (jarValid(args[0])) { // Check if jar file is valid
 					if (args.length == 1) { // Check if defaulted "Commands" class is in the jar file
 						if (isClassValid(args[0], "Commands")) {
@@ -192,7 +191,9 @@ public class Driver {
 			} catch(Exception ex) {
 				return false; // If exceptions somehow occur we return false
 			}
-
 		}
+
+
 }
+
 
