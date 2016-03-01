@@ -2,15 +2,50 @@ package methods;
 import java.lang.reflect.*;
 import java.io.*;
 import java.net.*;
+
+import methods.ParseGrammer.Expr;
+import methods.ParseGrammer.Funcall;
+import methods.ParseGrammer.Identifier;
+import methods.ParseGrammer.Value;
 /**
  * 
  * @author Bernie Mayer
  *
  */
 public class Reflection {
+	Class c;
 	
 	public static void main(String[] args) {
 		
+		LoadedJar lj = new LoadedJar();
+		try {
+			lj.loadJarClass("Commands.java", "Commands");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Class<?> c = lj.getClassFromLoad();
+	
+		printFuncalls(c);
 		
 		//loadClass("Commands.java");
 		
@@ -122,6 +157,34 @@ public class Reflection {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public Value funCall(Funcall f, Expr[] elem_set){
+		
+		Identifier methodIdentifier = f.ident;
+		String identifier = methodIdentifier.id;
+		
+		c = String.class;
+		Value[] vals = new Value[elem_set.length];
+		int i = 0;
+		try {
+			for (Expr e:elem_set){
+				if (e.containValue()){
+					vals[i] = e.value;
+				} else {
+					vals[i] = funCall(e.funCall, e.funCall.expr_set);
+				}
+			}
+			
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		
+		
+		
+		//Invoke the class here
+		return null;
+		
 	}
 	
 	
