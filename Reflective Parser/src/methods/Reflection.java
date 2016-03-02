@@ -163,7 +163,6 @@ public class Reflection {
 		
 		Identifier methodIdentifier = f.ident;
 		String identifier = methodIdentifier.id;
-		
 		c = String.class;
 		Value[] vals = new Value[elem_set.length];
 		int i = 0;
@@ -171,8 +170,10 @@ public class Reflection {
 			for (Expr e:elem_set){
 				if (e.containValue()){
 					vals[i] = e.value;
+					i++;
 				} else {
 					vals[i] = funCall(e.funCall, e.funCall.expr_set);
+					i++;
 				}
 			}
 			
@@ -180,10 +181,32 @@ public class Reflection {
 			e.printStackTrace();
 		}
 		
-		
+		//Create the Objects...
+		Object[] arguments = new Object[elem_set.length];
+		int j = 0;
+		for (Value v:vals){
+			if (v.isContainFloat()){
+				arguments[j] = v.val_float;
+				j++;
+			} else if (v.isContainInt()){
+				arguments[j] = v.val_int;
+				j++;
+			} else {
+				arguments[j] = v.val_string;
+				j++;
+			}
+		}
+		Method method = null;
+		Value result = null;
+		try{
+			method = c.getMethod(identifier, (Class[]) arguments);
+			result = (Value) method.invoke(c, arguments);
+		} catch (Exception e){
+			e.printStackTrace();
+		}
 		
 		//Invoke the class here
-		return null;
+		return result;
 		
 	}
 	

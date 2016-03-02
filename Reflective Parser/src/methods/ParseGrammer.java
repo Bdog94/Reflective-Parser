@@ -2,7 +2,7 @@ package methods;
 
 public class ParseGrammer {
 
-	public class Expr {
+	 class Expr {
 		Funcall funCall;
 		Value value;
 		
@@ -36,18 +36,54 @@ public class ParseGrammer {
 		
 	}
 
-	public class Funcall {
+	 class Funcall {
+		
 		Identifier ident;
+		public Identifier getIdent() {
+			return ident;
+		}
+		public void setIdent(Identifier ident) {
+			this.ident = ident;
+		}
 		int numOfExpr;
+		public int getNumOfExpr() {
+			return numOfExpr;
+		}
+		public void setNumOfExpr(int numOfExpr) {
+			this.numOfExpr = numOfExpr;
+		}
 		Expr[] expr_set;
+		public Expr[] getExpr_set() {
+			return expr_set;
+		}
+		public void setExpr_set(Expr[] expr_set) {
+			this.expr_set = expr_set;
+		}
+		
+		public Funcall(Identifier ident, int numOfExpr, Expr[] expr_set) {
+			super();
+			this.ident = ident;
+			this.numOfExpr = numOfExpr;
+			this.expr_set = expr_set;
+		}
+		public Funcall()
+		{
+			this.ident = null;
+			this.numOfExpr = 0;
+			this.expr_set = null;
+		}
+		
+		
 		
 		
 	}
-	public class Value {
+	class Value {
 		int val_int;
 		float val_float;
 		String val_string;
-		
+		boolean containInt;
+		boolean containFloat;
+		boolean containString;
 		
 		
 		public float getVal_float() {
@@ -87,6 +123,36 @@ public class ParseGrammer {
 		public boolean containString(){
 			return false;
 			
+		}
+
+		public boolean isContainInt() {
+			return containInt;
+		}
+
+		public void setContainInt(boolean containInt) {
+			this.containInt = containInt;
+			this.containFloat = false;
+			this.containString = false;
+		}
+
+		public boolean isContainFloat() {
+			return containFloat;
+		}
+
+		public void setContainFloat(boolean containFloat) {
+			this.containFloat = containFloat;
+			this.containInt = false;
+			this.containString = false;
+		}
+
+		public boolean isContainString() {
+			return containString;
+		}
+
+		public void setContainString(boolean containString) {
+			this.containString = containString;
+			this.containFloat = false;
+			this.containInt = false;
 		}
 		
 		}
