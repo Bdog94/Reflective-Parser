@@ -180,6 +180,9 @@ public class Reflection {
 		} catch (Exception e){
 			e.printStackTrace();
 		}
+		//set up the ParseGrammar
+		
+		ParseGrammer p = new ParseGrammer();
 		
 		//Create the Objects...
 		Object[] arguments = new Object[elem_set.length];
@@ -200,7 +203,7 @@ public class Reflection {
 		Value result = null;
 		try{
 			method = c.getMethod(identifier, (Class[]) arguments);
-			result = (Value) method.invoke(c, arguments);
+			result =  p.new Value(method.invoke(c, arguments));
 		} catch (Exception e){
 			e.printStackTrace();
 		}

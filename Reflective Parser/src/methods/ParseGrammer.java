@@ -78,6 +78,43 @@ public class ParseGrammer {
 		
 	}
 	class Value {
+		/**
+		 * This constructor allows for an Object class object to be cast
+		 * used in the Value class
+		 */
+		public Value(Object obj) {
+			if (obj.getClass().getSimpleName().equals("String")){
+				val_string = (String) obj;
+				containInt = false;
+				containFloat = false;
+				containString = true;
+			} else if (obj.getClass().getSimpleName().equals("Integer")){
+				Integer tmpInt = (Integer) obj;
+				val_int = tmpInt.intValue();
+				containInt = true;
+				containFloat = false;
+				containString = false;
+			} else if (obj.getClass().getSimpleName().equals("Float")){
+				Float tmpFloat = (Float) obj;
+				val_float = tmpFloat.floatValue();
+				containInt = false;
+				containFloat = true;
+				containString = false;
+			}
+			
+		}
+
+		public Value() {
+			val_int = 0;
+			val_float = 0.0f;
+			val_string = null;
+			
+			containInt = false;
+			containFloat = false;
+			containString = false;
+			
+		}
+
 		int val_int;
 		float val_float;
 		String val_string;
@@ -86,6 +123,14 @@ public class ParseGrammer {
 		boolean containString;
 		
 		
+		public int getVal_int() {
+			return val_int;
+		}
+
+		public void setVal_int(int val_int) {
+			this.val_int = val_int;
+		}
+
 		public float getVal_float() {
 			return val_float;
 		}
