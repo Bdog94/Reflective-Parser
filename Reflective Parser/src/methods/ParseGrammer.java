@@ -38,11 +38,11 @@ public class ParseGrammer {
 
 	 class Funcall {
 		
-		Identifier ident;
-		public Identifier getIdent() {
+		String ident;
+		public String getIdent() {
 			return ident;
 		}
-		public void setIdent(Identifier ident) {
+		public void setIdent(String ident) {
 			this.ident = ident;
 		}
 		int numOfExpr;
@@ -60,7 +60,7 @@ public class ParseGrammer {
 			this.expr_set = expr_set;
 		}
 		
-		public Funcall(Identifier ident, int numOfExpr, Expr[] expr_set) {
+		public Funcall(String ident, int numOfExpr, Expr[] expr_set) {
 			super();
 			this.ident = ident;
 			this.numOfExpr = numOfExpr;
@@ -82,7 +82,7 @@ public class ParseGrammer {
 		 * This constructor allows for an Object class object to be cast
 		 * used in the Value class
 		 */
-		public Value(Object obj) {
+		public Value(Object obj) throws InvalidValueException {
 			if (obj.getClass().getSimpleName().equals("String")){
 				val_string = (String) obj;
 				containInt = false;
@@ -100,6 +100,8 @@ public class ParseGrammer {
 				containInt = false;
 				containFloat = true;
 				containString = false;
+			} else {
+				throw new InvalidValueException();
 			}
 			
 		}
@@ -202,9 +204,7 @@ public class ParseGrammer {
 		
 		}
 	
-	public class Identifier {
-		String id;
-	}
+	
 		
 	}
 

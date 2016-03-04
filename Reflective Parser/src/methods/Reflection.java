@@ -5,7 +5,6 @@ import java.net.*;
 
 import methods.ParseGrammer.Expr;
 import methods.ParseGrammer.Funcall;
-import methods.ParseGrammer.Identifier;
 import methods.ParseGrammer.Value;
 /**
  * 
@@ -16,7 +15,6 @@ public class Reflection {
 	Class c;
 	
 	public static void main(String[] args) {
-		
 		LoadedJar lj = new LoadedJar();
 		try {
 			lj.loadJarClass("Commands.java", "Commands");
@@ -161,8 +159,8 @@ public class Reflection {
 	
 	public Value funCall(Funcall f, Expr[] elem_set){
 		
-		Identifier methodIdentifier = f.ident;
-		String identifier = methodIdentifier.id;
+
+		String identifier = f.ident;
 		c = String.class;
 		Value[] vals = new Value[elem_set.length];
 		int i = 0;
