@@ -13,6 +13,15 @@ public class ParseTree {
 	 * 
 	 * @param head
 	 */
+	public ParseTree(){
+		this.head = null;
+	}
+	
+	public void setHead(Node head) {
+		this.head = head;
+	}
+
+
 	public ParseTree(Node head) {
 		super();
 		this.head = head;

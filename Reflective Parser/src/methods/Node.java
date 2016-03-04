@@ -9,14 +9,19 @@ import java.util.ArrayList;
  */
 public class Node {
 
-	private ParseGrammer.Expr expression;
+	private String expression;
 	private ArrayList <Node> sub_expr;
 	
+	
+	public Node() {
+		this.expression = "";
+		this.sub_expr = new ArrayList<Node>(); 
+	}
 	/**
 	 * 
 	 * @param expression
 	 */
-	public Node(ParseGrammer.Expr expression) {
+	public Node(String expression) {
 		this.expression = expression;
 		this.sub_expr = new ArrayList<Node>();
 	}
@@ -33,7 +38,7 @@ public class Node {
 	 * 
 	 * @param expression
 	 */
-	public void setFunCall(ParseGrammer.Expr expression) {
+	public void setFunCall(String expression) {
 		this.expression = expression;
 	}
 
@@ -72,11 +77,15 @@ public class Node {
 	 */
 	public String toString ()
 	{
-		String nodeString = this.expression.toString();
-		
+		String nodeString = this.expression.toString() + '\n';
+
+		if(this.sub_expr.size() > 0)
+		{
+			nodeString += '{';
 		for(Node n: this.sub_expr)
-			nodeString = nodeString + '\n' + n.toString(); 
-			
+			nodeString = nodeString + n.toString(); 
+		nodeString += '}';
+		}
 		return nodeString; 
 	}
 	
@@ -87,6 +96,7 @@ public class Node {
 	public int getSize()
 	{
 		int size = 1;
+
 		for(Node n: this.sub_expr)
 			size += n.getSize();
 		return size;
