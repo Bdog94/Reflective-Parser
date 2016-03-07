@@ -2,6 +2,7 @@ package methods;
 import java.lang.reflect.*;
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
 import methods.ParseGrammer.Expr;
 import methods.ParseGrammer.Funcall;
@@ -14,6 +15,7 @@ import methods.ParseGrammer.Value;
 public class Reflection {
 	Object o;
 	Class  c;
+	Funcall func[];
 	
 	public static void main(String[] args) {
 		
@@ -36,19 +38,24 @@ public class Reflection {
 		URL url = null;
 		
 		try {
+			//Get the url of the File
 			url = f.toURI().toURL();
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		//Used to get the object and the class
 		URLClassLoader sysloader =  (URLClassLoader)ClassLoader.getSystemClassLoader(); 
 		
+		//Get a class object for the URLClassLoader
 		Class<?> sysclass = URLClassLoader.class;  
 		
-	    Class[] parameters = new Class[1];
+		
+		//This block below aims to allow for access to a private method
+	    Class[] parameters = new Class[1];	//The parameters of the method
 	    parameters[0] = url.getClass();
 		Method method = null;
 		try {
+			//Get the addURL method
 			method = sysclass.getDeclaredMethod("addURL",new Class[]{URL.class});
 		} catch (NoSuchMethodException e) {
 			// TODO Auto-generated catch block
@@ -58,9 +65,8 @@ public class Reflection {
 			e.printStackTrace();
 		}  
 		method.setAccessible(true); 
-		Object u = null;
-		Class c_1 = null;
 		try {
+			//Invoke the addUrl method with the url 
 		   method.invoke(sysloader,new Object[]{ url });
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
@@ -73,7 +79,7 @@ public class Reflection {
 			e.printStackTrace();
 		}
 		
-		//Loads the class into c_1
+		//Loads the class into c
 		try {
 			
 			c = sysloader.loadClass(className);
@@ -84,7 +90,7 @@ public class Reflection {
 			e.printStackTrace();
 		}
 		
-		
+		//Sets up an object
 		Object obj = null;
 		try{
 			
@@ -94,6 +100,7 @@ public class Reflection {
 		} catch (Exception e){
 			e.printStackTrace();
 		}
+		//Return the object created dynamically at runtime
 		return obj;
 	}
 	/**
@@ -137,6 +144,47 @@ public class Reflection {
 		}
 	/**
 	 * 
+	 * @param o The object that you want the funCalls for
+	 */
+	
+	public void setupFuncalls(Object o){
+		Class c = o.getClass();
+		
+		Method[] methods = c.getMethods();
+		ParseGrammer p = new ParseGrammer();
+		
+		ArrayList<Funcall> funCallArrayList = new ArrayList();
+		for (int i = 0; i < methods.length; i++){
+			String methodString = methods[i].getName();
+			int modifier = methods[i].getModifiers();
+			if (Modifier.isStatic(modifier)){
+			Funcall f = p.new Funcall();
+			f.setIdent(methodString);
+			
+			String returnString = methods[i].getReturnType().getName();
+			
+			Class[] parameterTypes = methods[i].getParameterTypes();
+			f.setNumOfExpr(parameterTypes.length);
+			f.expr_set = new Expr[f.numOfExpr];
+			
+			for (int k = 0; k < parameterTypes.length; k++ ){
+				
+				String parameterString = parameterTypes[k].getName();
+				try {
+					f.expr_set[k] = p.new Expr(p.new Value(parameterTypes[k].getClass()));
+				} catch (InvalidValueException e) {
+					e.printStackTrace();
+				}
+			  }
+			funCallArrayList.add(f);
+			
+			}
+		}
+		func = (Funcall[]) funCallArrayList.toArray();
+	}
+	
+	/**
+	 * 
 	 * @param o
 	 */
 	public void printFuncalls(Object o){
@@ -159,14 +207,12 @@ public class Reflection {
 				String parameterString = parameterTypes[k].getName();
 				System.out.print(parameterString + " ");
 			}
-			System.out.println("): " + returnString);
-			
-			
+			System.out.println("): " + returnString);		
 		}
 	}
 	
 	
-	public  Value funCall(Funcall f, Expr[] elem_set){
+	public Value funCall(Funcall f, Expr[] elem_set){
 		
 
 		String identifier = f.ident;
