@@ -77,14 +77,17 @@ public class Node {
 	 */
 	public String toString ()
 	{
-		String nodeString = this.expression.toString() + '\n';
+		String nodeString = this.expression.toString();
 
 		if(this.sub_expr.size() > 0)
 		{
-			nodeString += '{';
+			nodeString += ":{";
 		for(Node n: this.sub_expr)
-			nodeString = nodeString + n.toString(); 
-		nodeString += '}';
+			nodeString = nodeString + n.toString() + ',';
+		
+		if(nodeString.endsWith(","))
+			nodeString = nodeString.substring(0, nodeString.lastIndexOf(','));
+		nodeString += "}";
 		}
 		return nodeString; 
 	}
