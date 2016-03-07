@@ -12,48 +12,96 @@ import methods.ParseGrammer.Value;
  *
  */
 public class Reflection {
-	Class c;
+	Object o;
+	Class  c;
 	
 	public static void main(String[] args) {
-		LoadedJar lj = new LoadedJar();
+		
+	}
+	//Set up a object
+	public void setUpReflection(String fileName, String className) {
+		o = dynamicallyLoadFile(fileName, className);
+	}
+	/**
+	 * 
+	 * @param fileName The name of the file that you want to dynamically load
+	 * @param className Name of the class that you want to dynamically load
+	 * @return This method will return and instance in Object form of the class 
+	 * that you want to dynamically load
+	 */
+	
+	public Object dynamicallyLoadFile(String fileName, String className){
+		
+		File f = new File(fileName);
+		URL url = null;
+		
 		try {
-			lj.loadJarClass("Commands.java", "Commands");
-		} catch (ClassNotFoundException e) {
+			url = f.toURI().toURL();
+		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (MalformedURLException e) {
+		}
+		URLClassLoader sysloader =  (URLClassLoader)ClassLoader.getSystemClassLoader(); 
+		
+		Class<?> sysclass = URLClassLoader.class;  
+		
+	    Class[] parameters = new Class[1];
+	    parameters[0] = url.getClass();
+		Method method = null;
+		try {
+			method = sysclass.getDeclaredMethod("addURL",new Class[]{URL.class});
+		} catch (NoSuchMethodException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
+		}  
+		method.setAccessible(true); 
+		Object u = null;
+		Class c_1 = null;
+		try {
+		   method.invoke(sysloader,new Object[]{ url });
+		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IllegalAccessException e) {
+		} catch (InvocationTargetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		Class<?> c = lj.getClassFromLoad();
-	
-		printFuncalls(c);
+		//Loads the class into c_1
+		try {
+			
+			c = sysloader.loadClass(className);
 		
-		//loadClass("Commands.java");
+			
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
+		
+		Object obj = null;
+		try{
+			
+			Class classdef = Class.forName(c.getName());
+			
+			obj = classdef.newInstance();
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		return obj;
 	}
 	/**
 	 * 
 	 * @param o 
 	 */
 	
-	static void showConstructors(Object o)
+	public void showConstructors(Object o)
 	{
 		Class c = o.getClass();
 		Constructor[] theConstructors = c.getConstructors();
@@ -74,7 +122,7 @@ public class Reflection {
 	 * @param o
 	 */
 		
-	static void printFieldNames(Object o) {
+	public void printFieldNames(Object o) {
 		Class c = o.getClass();
 		Field[] publicFields = c.getFields();
 		
@@ -91,8 +139,9 @@ public class Reflection {
 	 * 
 	 * @param o
 	 */
-	static void printFuncalls(Object o){
+	public void printFuncalls(Object o){
 		Class c = o.getClass();
+		System.out.println(c.getName());
 		Method[] methods = c.getMethods();
 		
 		for (int i = 0; i < methods.length; i++){
@@ -100,8 +149,7 @@ public class Reflection {
 			int modifier = methods[i].getModifiers();
 			System.out.print("(" + methodString + " ");
 			
-			if (Modifier.isStatic(modifier))
-				System.out.print("Static");
+			
 			
 			String returnString = methods[i].getReturnType().getName();
 			
@@ -116,57 +164,17 @@ public class Reflection {
 			
 		}
 	}
-	/**
-	 * 
-	 * @param filename
-	 */
-	static void loadClass(String filename){
-		try {
-			//RandomAccessFile r = new RandomAccessFile(filename, "r");
-			File f = new File(filename);
-			URL url = f.toURI().toURL();
-			URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-			Class<?> sysclass = URLClassLoader.class;
-			Class<?> parameters = null;
-			Method method = null;
-			try {
-				method = sysclass.getDeclaredMethod("addURL", parameters);
-			} catch (NoSuchMethodException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			method.setAccessible(true);
-			Object u = null;
-			method.invoke(sysLoader, new Object[]{ u });
-			//printFuncalls(r);
-			
-		} catch (IOException e){
-			System.out.println(e);
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 	
-	public Value funCall(Funcall f, Expr[] elem_set){
+	
+	public  Value funCall(Funcall f, Expr[] elem_set){
 		
 
 		String identifier = f.ident;
-		c = String.class;
 		Value[] vals = new Value[elem_set.length];
 		int i = 0;
 		try {
 			for (Expr e:elem_set){
-				if (e.containValue()){
+				if (e.isValue()){
 					vals[i] = e.value;
 					i++;
 				} else {
@@ -184,24 +192,29 @@ public class Reflection {
 		
 		//Create the Objects...
 		Object[] arguments = new Object[elem_set.length];
+		Class[] parameters = new Class[elem_set.length];
 		int j = 0;
 		for (Value v:vals){
 			if (v.isContainFloat()){
 				arguments[j] = v.val_float;
+				parameters[j] = Float.class;
 				j++;
 			} else if (v.isContainInt()){
 				arguments[j] = v.val_int;
+				parameters[j] = Integer.class;
 				j++;
 			} else {
 				arguments[j] = v.val_string;
+				parameters[j] = String.class;
 				j++;
 			}
 		}
 		Method method = null;
+		Class c = o.getClass();
 		Value result = null;
 		try{
-			method = c.getMethod(identifier, (Class[]) arguments);
-			result =  p.new Value(method.invoke(c, arguments));
+			method =  c.getMethod(identifier, parameters);
+			result =  p.new Value(method.invoke(o, arguments));
 		} catch (Exception e){
 			e.printStackTrace();
 		}

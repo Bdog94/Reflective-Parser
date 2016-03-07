@@ -3,9 +3,41 @@ package methods;
 public class ParseGrammer {
 
 	 class Expr {
+		public Expr(Funcall funCall) {
+			this.funCall = funCall;
+			isFunCall = true;
+			isValue = false;
+		}
+		
+		public Expr(Value value){
+			this.value = value;
+			isFunCall = false;
+			isValue = true;
+		}
 		Funcall funCall;
 		Value value;
+		boolean isFunCall;
+		boolean isValue;
 		
+		
+		
+		
+		public boolean isFunCall() {
+			return isFunCall;
+		}
+
+		public void setFunCall(boolean isFunCall) {
+			this.isFunCall = isFunCall;
+		}
+
+		public boolean isValue() {
+			return isValue;
+		}
+
+		public void setValue(boolean isValue) {
+			this.isValue = isValue;
+		}
+
 		public Funcall getFunCall() {
 			return funCall;
 		}
@@ -19,20 +51,7 @@ public class ParseGrammer {
 			this.value = value;
 		}
 		
-		/*
-		 * Does not contain any functionality right now
-		 */
-		public boolean containFunCall() {
-			return false;
-			
-		}
-		/*
-		 * No functionality currently
-		 */
-		public boolean containValue() {
-			return false;
-			
-		}
+	
 		
 	}
 
