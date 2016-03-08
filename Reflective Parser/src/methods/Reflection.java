@@ -171,17 +171,31 @@ public class Reflection {
 				
 				String parameterString = parameterTypes[k].getName();
 				try {
-					f.expr_set[k] = p.new Expr(p.new Value(parameterTypes[k].getClass()));
+					if (parameterTypes[k].getName().toLowerCase().contains("string")){
+						f.expr_set[k] = p.new Expr(p.new Value(new String()));
+					} else if (parameterTypes[k].getName().toLowerCase().contains("float")){
+						f.expr_set[k] = p.new Expr(p.new Value(new Float(0.0)));
+					} else {
+						f.expr_set[k] = p.new Expr(p.new Value(new Integer(0)));
+					}
+						
 				} catch (InvalidValueException e) {
 					e.printStackTrace();
-				}
+				} 
 			  }
 			funCallArrayList.add(f);
 			
 			}
 		}
-		func = (Funcall[]) funCallArrayList.toArray();
-	}
+		func = new Funcall[funCallArrayList.size()];
+		int i = 0;
+		for (Funcall f:funCallArrayList){
+			func[i] = f;
+			i++;
+			}
+		}
+				
+	
 	
 	/**
 	 * 
@@ -243,11 +257,11 @@ public class Reflection {
 		for (Value v:vals){
 			if (v.isContainFloat()){
 				arguments[j] = v.val_float;
-				parameters[j] = Float.class;
+				parameters[j] = float.class;
 				j++;
 			} else if (v.isContainInt()){
 				arguments[j] = v.val_int;
-				parameters[j] = Integer.class;
+				parameters[j] = int.class;
 				j++;
 			} else {
 				arguments[j] = v.val_string;
