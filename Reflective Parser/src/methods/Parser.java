@@ -55,6 +55,7 @@ public class Parser {
 			parsedInput.setHead(new Node(convertToValue(input)));
 		}
 
+		generateFuncallInfo(parsedInput.head);
 		return parsedInput;
 	}
 
