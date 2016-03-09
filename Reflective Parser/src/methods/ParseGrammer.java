@@ -51,7 +51,12 @@ public class ParseGrammer {
 			this.value = value;
 		}
 		
-	
+		public String toString(){
+			if(this.isFunCall())
+				return this.funCall.toString();
+			return this.value.toString();
+				
+		}
 		
 	}
 
@@ -79,6 +84,12 @@ public class ParseGrammer {
 			this.expr_set = expr_set;
 		}
 		
+		public Funcall(String ident)
+		{
+			this.ident = ident;
+			this.numOfExpr = 0;
+			this.expr_set = null;
+		}
 		public Funcall(String ident, int numOfExpr, Expr[] expr_set) {
 			super();
 			this.ident = ident;
@@ -92,11 +103,15 @@ public class ParseGrammer {
 			this.expr_set = null;
 		}
 		
-		
+		public String toString(){
+			if(ident == null)
+				return "";
+			return ident;
+		}
 		
 		
 	}
-	class Value {
+	public class Value {
 		/**
 		 * This constructor allows for an Object class object to be cast
 		 * used in the Value class
@@ -124,7 +139,30 @@ public class ParseGrammer {
 			}
 			
 		}
-
+		public Value(String str)
+		{
+			this.val_string = str;
+			this.containString = true;
+			this.containFloat = false;
+			this.containInt = false;
+		}
+		
+		public Value(int i)
+		{
+			this.val_int = i;
+			this.containString = false;
+			this.containFloat = false;
+			this.containInt = true;
+		}
+		
+		public Value(float f)
+		{
+			this.val_float = f;
+			this.containString = false;
+			this.containFloat = true;
+			this.containInt = false;
+		}
+		
 		public Value() {
 			val_int = 0;
 			val_float = 0.0f;
@@ -221,9 +259,19 @@ public class ParseGrammer {
 			this.containInt = false;
 		}
 		
+		public String toString()
+		{
+			if(containFloat)
+				return String.valueOf(val_float);
+			if(containInt)
+				return String.valueOf(val_int);
+			if(containString)
+				return val_string;
+			return "";
+			
 		}
 	
-	
+	}
 		
 	}
 

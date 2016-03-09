@@ -9,19 +9,19 @@ import java.util.ArrayList;
  */
 public class Node {
 
-	private String expression;
+	private ParseGrammer.Expr expression;
 	private ArrayList <Node> sub_expr;
 	
 	
 	public Node() {
-		this.expression = "";
+		this.expression = null;
 		this.sub_expr = new ArrayList<Node>(); 
 	}
 	/**
 	 * 
 	 * @param expression
 	 */
-	public Node(String expression) {
+	public Node(ParseGrammer.Expr expression) {
 		this.expression = expression;
 		this.sub_expr = new ArrayList<Node>();
 	}
@@ -38,7 +38,7 @@ public class Node {
 	 * 
 	 * @param expression
 	 */
-	public void setFunCall(String expression) {
+	public void setFunCall(ParseGrammer.Expr expression) {
 		this.expression = expression;
 	}
 

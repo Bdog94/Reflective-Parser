@@ -42,7 +42,7 @@ public class Parser {
 	 * @return
 	 * @throws Exception
 	 */
-	public ParseTree parseLine(String input) throws IOException {
+	public ParseTree parseLine(String input) throws Exception {
 		ParseTree parsedInput = new ParseTree();
 		this.input = input;
 		// System.out.println(inputScan.delimiter().toString());
@@ -52,7 +52,7 @@ public class Parser {
 			this.input = this.input.substring(1);
 			parsedInput.setHead(parseFuncall());
 		} else {
-			parsedInput.setHead(new Node(input));
+			parsedInput.setHead(new Node(convertToValue(input)));
 		}
 
 		return parsedInput;
@@ -65,18 +65,18 @@ public class Parser {
 	 * @return
 	 * @throws Exception
 	 */
-	private Node parseFuncall() throws IOException {
+	private Node parseFuncall() throws Exception {
 		Node n = null;
 		char nextChar = ' ';
 
 		if (input.indexOf(' ') == input.indexOf(')'))
 			throw new IOException("Improper function call syntax");
 		if (input.indexOf(' ') > input.indexOf(')')) {
-			n = new Node(input.substring(0, input.indexOf(')')));
+			n = new Node(convertToFuncall(input.substring(0, input.indexOf(')'))));
 			input.substring(input.indexOf(')') + 1);
 
 		} else {
-			n = new Node(input.substring(0, input.indexOf(' ')));
+			n = new Node(convertToFuncall(input.substring(0, input.indexOf(' '))));
 			this.input = input.substring(input.indexOf(' ') + 1);
 			for (;;) {
 				System.out.println(input.charAt(0));
@@ -94,12 +94,12 @@ public class Parser {
 					if (input.indexOf(' ') < input.indexOf(')')
 							&& input.indexOf(' ') != -1
 							&& input.indexOf(')') != -1) {
-						n.addExpression(new Node(input.substring(0,
-								input.indexOf(' '))));
+						n.addExpression(new Node(convertToValue((input.substring(0,
+								input.indexOf(' '))))));
 						this.input = input.substring(input.indexOf(' ') + 1);
 					} else {
-						n.addExpression(new Node(input.substring(0,
-								input.indexOf(')'))));
+						n.addExpression(new Node(convertToValue(input.substring(0,
+								input.indexOf(')')))));
 						this.input = input.substring(input.indexOf(')') + 1 );
 					}
 					break;
@@ -125,7 +125,7 @@ public class Parser {
 				throw new IOException("Invalid identifier format");
 			}
 			System.out.println("Success!");
-			// converted = new ParseGrammer.Expr(new Funcall());
+			converted = new ParseGrammer().new Expr(new ParseGrammer().new Funcall(target));
 		} else {
 			throw new IOException("Invalid identifier format");
 		}
@@ -140,23 +140,31 @@ public class Parser {
 	}
 
 	private ParseGrammer.Expr convertToValue(String target) throws Exception {
+		ParseGrammer p = new ParseGrammer();
 		ParseGrammer.Expr converted = null;
+		ParseGrammer.Value val;
+
 		char first = target.charAt(0), second = target.charAt(1);
 		if (first == '"'
 				&& target.charAt(target.length() - 1) == '"') {
 			System.out.println("A valid string");
-			// converted = new ParseGrammer.Expr(new
-			// ParseGrammer.Value(target));
+			val = new ParseGrammer().new Value(target);
+			converted = new ParseGrammer().new Expr(val);
 		} else {
 			Scanner converter = new Scanner(target);
 			if (converter.hasNextInt()) {
-				System.out.println("Has an int: " + converter.nextInt());
+				System.out.println("Has an int!");
+				val = new ParseGrammer().new Value(converter.nextInt());
+				converted = new ParseGrammer().new Expr(val);				
 			} else if (converter.hasNextFloat()
 					&& ((target.charAt(0) >= '0' && target.charAt(0) <= '9')
 							|| target.charAt(0) == '+'
 							&& (target.charAt(1) >= '0' && target.charAt(1) <= '9') || target.charAt(0) == '-'
 							&& (target.charAt(1) >= '0' && target.charAt(1) <= '9'))) {
-				System.out.println("Has a float: " + converter.nextFloat());
+				System.out.println("Has a float: ");
+				val = new ParseGrammer().new Value(converter.nextFloat());
+				converted = new ParseGrammer().new Expr(val);
+
 			} else {
 				converter.close();
 				throw new IOException("Invalid value");
