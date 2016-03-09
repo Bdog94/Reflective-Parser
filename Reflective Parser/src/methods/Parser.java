@@ -100,7 +100,7 @@ public class Parser {
 					} else {
 						n.addExpression(new Node(convertToValue(input.substring(0,
 								input.indexOf(')')))));
-						this.input = input.substring(input.indexOf(')') + 1 );
+						this.input = input.substring(input.indexOf(')'));
 					}
 					break;
 				}
@@ -144,16 +144,19 @@ public class Parser {
 		ParseGrammer.Expr converted = null;
 		ParseGrammer.Value val;
 
-		char first = target.charAt(0), second = target.charAt(1);
+		char first = target.charAt(0);
+		char second;
+		if(target.length() > 1)
+			second = target.charAt(1);
+		else
+			second = '\0';
 		if (first == '"'
 				&& target.charAt(target.length() - 1) == '"') {
-			System.out.println("A valid string");
 			val = new ParseGrammer().new Value(target);
 			converted = new ParseGrammer().new Expr(val);
 		} else {
 			Scanner converter = new Scanner(target);
 			if (converter.hasNextInt()) {
-				System.out.println("Has an int!");
 				val = new ParseGrammer().new Value(converter.nextInt());
 				converted = new ParseGrammer().new Expr(val);				
 			} else if (converter.hasNextFloat()
@@ -161,7 +164,6 @@ public class Parser {
 							|| target.charAt(0) == '+'
 							&& (target.charAt(1) >= '0' && target.charAt(1) <= '9') || target.charAt(0) == '-'
 							&& (target.charAt(1) >= '0' && target.charAt(1) <= '9'))) {
-				System.out.println("Has a float: ");
 				val = new ParseGrammer().new Value(converter.nextFloat());
 				converted = new ParseGrammer().new Expr(val);
 
@@ -173,4 +175,18 @@ public class Parser {
 		return converted;
 	}
 
+	private void generateFuncallInfo(Node n)
+	{
+		if (n.getExpression().isFunCall)
+		{
+			n.getExpression().getFunCall().setNumOfExpr(n.numExpressions());
+			n.getExpression().getFunCall().setExpr_set(n.getSubExpr().toArray(n.getExpression().getFunCall().getExpr_set()));
+			for(Node sub: n.getSubExpr())
+			{
+				if(sub.getExpression().isFunCall)
+					generateFuncallInfo(sub);
+			}
+		}
+	}
+	
 }

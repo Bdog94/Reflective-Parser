@@ -20,8 +20,7 @@ public class ParseTree {
 	public void setHead(Node head) {
 		this.head = head;
 	}
-
-
+	
 	public ParseTree(Node head) {
 		super();
 		this.head = head;

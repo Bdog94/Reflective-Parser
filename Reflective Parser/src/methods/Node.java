@@ -30,10 +30,15 @@ public class Node {
 	 * 
 	 * @return
 	 */
-	public Object getExpression() {
+	public ParseGrammer.Expr getExpression() {
 		return this.expression;
 	}
 
+	public ArrayList<Node> getSubExpr()
+	{
+		return this.sub_expr;
+	}
+	
 	/**
 	 * 
 	 * @param expression
