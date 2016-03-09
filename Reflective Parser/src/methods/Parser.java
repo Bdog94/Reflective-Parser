@@ -23,8 +23,7 @@ public class Parser {
 
 		Parser p = new Parser();
 
-		try {
-			//p.convertToValue(a);
+		try{
 			
 			 ParseTree t = p.parseLine(a);
 			 System.out.println("Parsed input of \"" + a + "\": ");
@@ -80,7 +79,6 @@ public class Parser {
 			n = new Node(convertToFuncall(input.substring(0, input.indexOf(' '))));
 			this.input = input.substring(input.indexOf(' ') + 1);
 			for (;;) {
-				System.out.println(input.charAt(0));
 				switch (input.charAt(0)) {
 				case ')':
 					return n;
@@ -125,7 +123,6 @@ public class Parser {
 					continue;
 				throw new IOException("Invalid identifier format");
 			}
-			System.out.println("Success!");
 			converted = new ParseGrammer().new Expr(new ParseGrammer().new Funcall(target));
 		} else {
 			throw new IOException("Invalid identifier format");
@@ -180,13 +177,15 @@ public class Parser {
 	{
 		if (n.getExpression().isFunCall)
 		{
+			ParseGrammer.Expr sub_expr[] = new ParseGrammer.Expr[n.numExpressions()]; 
 			n.getExpression().getFunCall().setNumOfExpr(n.numExpressions());
-			n.getExpression().getFunCall().setExpr_set(n.getSubExpr().toArray(n.getExpression().getFunCall().getExpr_set()));
-			for(Node sub: n.getSubExpr())
+			for(int i = 0; i < n.numExpressions(); i++)
 			{
-				if(sub.getExpression().isFunCall)
-					generateFuncallInfo(sub);
+				if(n.getExpression(i).getExpression().isFunCall())
+					generateFuncallInfo(n.getExpression(i));
+				sub_expr[i] = n.getExpression(i).getExpression();
 			}
+			n.getExpression().funCall.setExpr_set(sub_expr);
 		}
 	}
 	

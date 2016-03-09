@@ -72,7 +72,7 @@ public class Node {
 	 */
 	public Node getExpression(int index)
 	{
-		if(sub_expr.isEmpty())
+		if(!sub_expr.isEmpty())
 			return this.sub_expr.get(index);
 		else return null;
 	}
