@@ -212,31 +212,56 @@ public class Reflection {
 	 * @param o
 	 */
 	public void printFuncalls(Object o){
-		Class c = o.getClass();
-		System.out.println(c.getName());
-		Method[] methods = c.getMethods();
-		
+		Class c = o.getClass();		//Get the class from the object passed in
+		Method[] methods = c.getMethods();	//Get all of the methods for the class passed in
 		for (int i = 0; i < methods.length; i++){
-			String methodString = methods[i].getName();
-			int modifier = methods[i].getModifiers();
+			
+			String methodString = methods[i].getName();	//Name of the ith method
+			int modifier = methods[i].getModifiers();	//Modifier of the method, ie is it final, public, private etc
+			
+			//This method is only concerned with static methods
+			if (Modifier.isStatic(modifier)){
 			System.out.print("(" + methodString + " ");
 			
 			
-			
+			//Get the return type of the method
 			String returnString = methods[i].getReturnType().getName();
 			
 			Class[] parameterTypes = methods[i].getParameterTypes();
 			for (int k = 0; k < parameterTypes.length; k++ ){
 				
 				String parameterString = parameterTypes[k].getName();
+				if (parameterString.equals("java.lang.String"))
+					parameterString = "string";
+				else if (parameterString.equals("java.lang.Float"))
+					parameterString = "float";
+				else if (parameterString.equals("java.lang.Integer"))
+					parameterString = "int";
+				
 				System.out.print(parameterString + " ");
 			}
-			System.out.println("): " + returnString);		
+			
+			if (returnString.equals("java.lang.String"))
+				returnString = "string";
+			else if (returnString.equals("java.lang.Float"))
+				returnString = "float";
+			else if (returnString.equals("java.lang.Integer"))
+				returnString = "int";
+			
+			System.out.println("): " + returnString);
+			}
 		}
 	}
 	
+	public Value funCall(Expr e ){
+		if (e.isFunCall){
+			return funCall(e.getFunCall(), e.getFunCall().getExpr_set());
+		}
+		ParseGrammer p = new ParseGrammer();
+		return p.new Value("s");
+	}
 	
-	public Value funCall(Funcall f, Expr[] elem_set){
+	public Value funCall(Funcall f, Expr[] elem_set) {
 		
 
 		String identifier = f.ident;

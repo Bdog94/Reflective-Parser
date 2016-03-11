@@ -109,7 +109,7 @@ public class ReflectionTest extends TestCase{
 		try {
 			pt = p.parseLine("(add 1 1)");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 		Node n = pt.head;
