@@ -84,6 +84,7 @@ public class Parser {
 			for (;;) {
 				switch (input.charAt(this.position)) {
 				case ')':
+					this.position++;
 					return n;
 				case '(':
 					this.position++;
