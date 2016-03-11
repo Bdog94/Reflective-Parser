@@ -17,6 +17,8 @@ public class Reflection {
 	Class  c;
 	Funcall func[];
 	
+	
+	
 	public static void main(String[] args) {
 		
 	}
@@ -35,6 +37,14 @@ public class Reflection {
 	public Object dynamicallyLoadFile(String fileName, String className){
 		
 		File f = new File(fileName);
+		
+		
+		if (!f.exists()){
+			System.err.print("Could not load jar file: " + fileName);
+			System.exit(-5);
+		}
+		
+		
 		URL url = null;
 		
 		try {
@@ -86,8 +96,8 @@ public class Reflection {
 		
 			
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.print("Could not find class:" + className );
+			System.exit(-6);
 		}
 		
 		//Sets up an object

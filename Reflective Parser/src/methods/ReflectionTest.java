@@ -1,10 +1,13 @@
 package methods;
 
 import static org.junit.Assert.*;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
 import junit.framework.*;
 import methods.ParseGrammer.Expr;
 import methods.ParseGrammer.Funcall;
-
 import methods.ParseGrammer.Value;
 
 import org.junit.Test;
@@ -100,6 +103,7 @@ public class ReflectionTest extends TestCase{
 	@Test
 	public void testIntegratingParsingAndReflection(){
 		Reflection r = new Reflection();
+		r.setUpReflection("commands.jar","Commands");
 		Parser p = new Parser();
 		ParseTree pt = null;
 		try {
@@ -119,5 +123,8 @@ public class ReflectionTest extends TestCase{
 		assertEquals(v.getVal_int(), 2);
 	}
 	
+	
+	}
+	
 
-}
+
