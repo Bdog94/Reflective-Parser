@@ -13,7 +13,8 @@ import methods.ParseGrammer.Funcall;
  */
 public class Parser {
 	private String input;
-
+	private int position;
+	
 	public static void main(String[] args) {
 		String a = "";
 		Scanner userIn = new Scanner(System.in);
@@ -44,17 +45,18 @@ public class Parser {
 	public ParseTree parseLine(String input) throws Exception {
 		ParseTree parsedInput = new ParseTree();
 		this.input = input;
+		this.position = 0;
 		// System.out.println(inputScan.delimiter().toString());
 		// inputScan.useDelimiter("[{} ]");
 
 		if (this.input.charAt(0) == '(') {
-			this.input = this.input.substring(1);
+			this.position = 1;
 			parsedInput.setHead(parseFuncall());
 		} else {
-			parsedInput.setHead(new Node(convertToValue(input)));
+			parsedInput.setHead(new Node(convertToValue(input), this.position));
 		}
 
-		generateFuncallInfo(parsedInput.head);
+		//generateFuncallInfo(parsedInput.head);
 		return parsedInput;
 	}
 
@@ -69,37 +71,38 @@ public class Parser {
 		Node n = null;
 		char nextChar = ' ';
 
-		if (input.indexOf(' ') == input.indexOf(')'))
+		if (input.indexOf(' ', this.position) == input.indexOf(')', this.position))
 			throw new IOException("Improper function call syntax");
-		if (input.indexOf(' ') > input.indexOf(')')) {
-			n = new Node(convertToFuncall(input.substring(0, input.indexOf(')'))));
-			input.substring(input.indexOf(')') + 1);
-
-		} else {
-			n = new Node(convertToFuncall(input.substring(0, input.indexOf(' '))));
-			this.input = input.substring(input.indexOf(' ') + 1);
+		if (input.indexOf(' ', this.position) == -1 && input.indexOf(')', this.position) != -1) {
+			n = new Node(convertToFuncall(input.substring(this.position, input.indexOf(')', this.position))), this.position);
+			this.position = input.indexOf(')', this.position) + 1;
+			return n;
+		} 
+		else {
+			n = new Node(convertToFuncall(input.substring(this.position, input.indexOf(' ', this.position))), this.position);
+			this.position = input.indexOf(' ', this.position) + 1;
 			for (;;) {
-				switch (input.charAt(0)) {
+				switch (input.charAt(this.position)) {
 				case ')':
 					return n;
 				case '(':
-					input = input.substring(1);
+					this.position++;
 					n.addExpression(parseFuncall());
 					break;
 				case ' ':
-					input = input.substring(1);
+					this.position++;
 					break;
 				default:
-					if (input.indexOf(' ') < input.indexOf(')')
-							&& input.indexOf(' ') != -1
-							&& input.indexOf(')') != -1) {
-						n.addExpression(new Node(convertToValue((input.substring(0,
-								input.indexOf(' '))))));
-						this.input = input.substring(input.indexOf(' ') + 1);
+					if (input.indexOf(' ', this.position) < input.indexOf(')', this.position)
+							&& input.indexOf(' ', this.position) != -1
+							&& input.indexOf(')', this.position) != -1) {
+						n.addExpression(new Node(convertToValue((input.substring(this.position,
+								input.indexOf(' ', this.position)))), this.position));
+						this.position = input.indexOf(' ', this.position) + 1;
 					} else {
-						n.addExpression(new Node(convertToValue(input.substring(0,
-								input.indexOf(')')))));
-						this.input = input.substring(input.indexOf(')'));
+						n.addExpression(new Node(convertToValue(input.substring(this.position,
+								input.indexOf(')', this.position))), this.position));
+						this.position = input.indexOf(')', this.position);
 					}
 					break;
 				}
@@ -108,7 +111,7 @@ public class Parser {
 							"Input line ended before the end of a function call was found");
 			}
 		}
-		return null;
+
 	}
 
 	private ParseGrammer.Expr convertToFuncall(String target)

@@ -11,7 +11,7 @@ public class Node {
 
 	private ParseGrammer.Expr expression;
 	private ArrayList <Node> sub_expr;
-	
+	private int linePosition;
 	
 	public Node() {
 		this.expression = null;
@@ -21,9 +21,10 @@ public class Node {
 	 * 
 	 * @param expression
 	 */
-	public Node(ParseGrammer.Expr expression) {
+	public Node(ParseGrammer.Expr expression, int position) {
 		this.expression = expression;
 		this.sub_expr = new ArrayList<Node>();
+		this.linePosition = position;
 	}
 
 	/**
@@ -82,7 +83,7 @@ public class Node {
 	 */
 	public String toString ()
 	{
-		String nodeString = this.expression.toString();
+		String nodeString = this.expression.toString() + '@' + this.linePosition;
 
 		if(this.sub_expr.size() > 0)
 		{
