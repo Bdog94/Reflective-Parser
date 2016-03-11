@@ -115,6 +115,12 @@ public class Parser {
 
 	}
 
+	/**
+	 * 
+	 * @param target
+	 * @return
+	 * @throws IOException
+	 */
 	private ParseGrammer.Expr convertToFuncall(String target)
 			throws IOException {
 		ParseGrammer.Expr converted = null;
@@ -134,6 +140,11 @@ public class Parser {
 		return converted;
 	}
 
+	/**
+	 * 
+	 * @param aChar
+	 * @return
+	 */
 	private Boolean isAlphanumeric(char aChar) {
 		if ((aChar >= 'a' && aChar <= 'z') || (aChar >= 'A' && aChar <= 'Z')
 				|| (aChar >= '0' && aChar <= '9') || (aChar == '_'))
@@ -141,6 +152,12 @@ public class Parser {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param target
+	 * @return
+	 * @throws Exception
+	 */
 	private ParseGrammer.Expr convertToValue(String target) throws Exception {
 		ParseGrammer p = new ParseGrammer();
 		ParseGrammer.Expr converted = null;
@@ -177,6 +194,10 @@ public class Parser {
 		return converted;
 	}
 
+	/**
+	 * 
+	 * @param n
+	 */
 	private void generateFuncallInfo(Node n)
 	{
 		if (n.getExpression().isFunCall)
