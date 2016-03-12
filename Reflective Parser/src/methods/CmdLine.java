@@ -330,38 +330,39 @@ public class CmdLine {
 	 * @param args - arguments that the user has decided to put inside of the command line when running program
 	 */
 	public void argChecker(String[] args){
-	try{
-		if (args.length == 0){
-			printSummary();
-		}
-		if (checkHelp(args)){
-			printSummary();
-			if (checkVerb(args)){
-				Debug.setIsVerbose(true);
-				System.out.println("Verbose is on");
+		try{
+			if ((args.length != 0) || (args.length != 2) || (args.length != 3)){
+				printSummary();
 			}
-		}
-		else if (args.length == 2){
-			r.setUpReflection(args[0], args[1]);
-			// send kyle reflection object
-			mainMenu();
-		}
-		else if (checkVerb(args) && (args.length == 3)){
-			Debug.setIsVerbose(true);
-			System.out.println("Verbose is on");
 			if (checkHelp(args)){
 				printSummary();
 			}
-			r.setUpReflection(args[1], args[2]);
-			// send kyle reflection object
+			else if (args.length == 2){
+				r.setUpReflection(args[0], args[1]);
+				// send kyle reflection object
+				mainMenu();
+			}
+			else if (checkVerb(args) && (args.length == 3)){
+				Debug.setIsVerbose(true);
+				System.out.println("Verbose is on");
+				r.setUpReflection(args[1], args[2]);
+				// send kyle reflection object
+				mainMenu();
+			}
+			else{
+				System.out.println("Invalid");
+			}
+		}
+		catch(Exception e){
+			//If verbose is on it will print it the stack trace of the given error 
+			if (Debug.isVerbose) { //error begins
+				e.printStackTrace();			//prints out specified stack trace from the given error
+				//returns back to normal execution
+				mainMenu();
+			}
+			//returns back to normal execution if verbose mode is off 
 			mainMenu();
 		}
-		else{
-			System.out.println("Invalid");
-		}
-	}catch(Exception e){
-		
-	}
 	}
 	
 	/**
