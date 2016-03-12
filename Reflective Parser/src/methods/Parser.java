@@ -32,8 +32,8 @@ public class Parser {
 		
 			try {
 				ParseTree t = p.parseLine("(call 234 (call 234))");
-				System.out.println(t.head.getExpression(1).getExpression().toString());
-				System.out.println(t.head.findExpression(t.head.getExpression(1).getExpression()));
+				System.out.println(t.head.getExpression(1).getExpression(0).getExpression());
+				System.out.println(t.head.findExpression(t.head.getExpression(1).getExpression(0).getExpression()));
 			} catch (Exception e) {
 				System.out.println(e.toString());
 			}

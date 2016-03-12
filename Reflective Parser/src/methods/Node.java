@@ -123,22 +123,21 @@ public class Node {
 	public int findExpression (ParseGrammer.Expr target)
 	{
 		int targetPosition = -1;
+	
 		if(this.expression.isFunCall())
 		{
 			if(this.expression.funCall.equals(target.funCall))
 				targetPosition = this.linePosition;
 			else
 				{for(Node n: this.sub_expr)
-				{
-					if(n.getExpression().isFunCall)
-						targetPosition = n.findExpression(target);
+					{targetPosition = n.findExpression(target);
 					if(targetPosition != -1)
-						break;
+					break;
 				}}}
 		else
 		{
-			if(this.expression.value.equals(expression.value))
-				targetPosition = this.linePosition;
+			if(this.expression.getValue().equals(target.getValue()))
+			targetPosition = this.linePosition;
 		}
 		return targetPosition;
 	}
