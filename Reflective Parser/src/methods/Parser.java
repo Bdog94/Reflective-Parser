@@ -32,8 +32,8 @@ public class Parser {
 		
 			try {
 				ParseTree t = p.parseLine("(call 234 (call 234))");
-				System.out.println(t.head.getExpression(1).getExpression(0).getExpression());
-				System.out.println(t.head.findExpression(t.head.getExpression(1).getExpression(0).getExpression()));
+				System.out.println(t.head.findSubExpr(1).findSubExpr(0).getExpression());
+				System.out.println(t.head.findExpression(t.head.findSubExpr(1).findSubExpr(0).getExpression()));
 			} catch (Exception e) {
 				System.out.println(e.toString());
 			}
@@ -229,9 +229,9 @@ public class Parser {
 					.numExpressions()];
 			n.getExpression().getFunCall().setNumOfExpr(n.numExpressions());
 			for (int i = 0; i < n.numExpressions(); i++) {
-				if (n.getExpression(i).getExpression().isFunCall())
-					generateFuncallInfo(n.getExpression(i));
-				sub_expr[i] = n.getExpression(i).getExpression();
+				if (n.findSubExpr(i).getExpression().isFunCall())
+					generateFuncallInfo(n.findSubExpr(i));
+				sub_expr[i] = n.findSubExpr(i).getExpression();
 			}
 			n.getExpression().funCall.setExpr_set(sub_expr);
 		}

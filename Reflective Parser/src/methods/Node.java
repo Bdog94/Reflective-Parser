@@ -81,7 +81,7 @@ public class Node {
 	 * @param index
 	 * @return
 	 */
-	public Node getExpression(int index) {
+	public Node findSubExpr(int index) {
 		if (!sub_expr.isEmpty())
 			return this.sub_expr.get(index);
 		else
