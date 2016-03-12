@@ -11,7 +11,8 @@ import java.util.Scanner;
 public class CmdLine {
 	
 	
-	
+	String className;
+	String fileName;
 	Reflection r;
 	
 	
@@ -448,6 +449,20 @@ public class CmdLine {
 	}
 	
 
+	
+	public String getClassName(){
+		return className;
+	}
+	public String getFileName(){
+		return fileName;
+	}
+	public void setClassName(String newClassName){
+		className = newClassName;
+	}
+	public void setFileName(String newFileName){
+		fileName = newFileName;
+	}
+	
 /*	
 	
 	/**
