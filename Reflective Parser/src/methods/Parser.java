@@ -30,6 +30,14 @@ public class Parser {
 			p.parseTest( "(call words (call 234))");
 			p.parseTest("(call \"words\" (call 234))");
 		
+			try {
+				ParseTree t = p.parseLine("(call 234 (call 234))");
+				System.out.println(t.head.getExpression(1).getExpression().toString());
+				System.out.println(t.head.findExpression(t.head.getExpression(1).getExpression()));
+			} catch (Exception e) {
+				System.out.println(e.toString());
+			}
+				
 	}
 
 	private void parseTest (String a)

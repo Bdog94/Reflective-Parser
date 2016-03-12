@@ -10,14 +10,14 @@ import java.util.ArrayList;
 public class Node {
 
 	private ParseGrammer.Expr expression;
-	private ArrayList <Node> sub_expr;
+	private ArrayList<Node> sub_expr;
 	private int linePosition;
-	
+
 	public Node() {
 		this.expression = null;
-		this.sub_expr = new ArrayList<Node>(); 
+		this.sub_expr = new ArrayList<Node>();
 	}
-	
+
 	/**
 	 * 
 	 * @param expression
@@ -35,7 +35,7 @@ public class Node {
 	public ParseGrammer.Expr getExpression() {
 		return this.expression;
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -43,16 +43,15 @@ public class Node {
 	public int getLinePosition() {
 		return linePosition;
 	}
-	
+
 	/**
 	 * 
 	 * @return
 	 */
-	public ArrayList<Node> getSubExpr()
-	{
+	public ArrayList<Node> getSubExpr() {
 		return this.sub_expr;
 	}
-	
+
 	/**
 	 * 
 	 * @param expression
@@ -65,8 +64,7 @@ public class Node {
 	 * 
 	 * @return
 	 */
-	public int numExpressions ()
-	{
+	public int numExpressions() {
 		return sub_expr.size();
 	}
 
@@ -74,54 +72,74 @@ public class Node {
 	 * 
 	 * @param newExpression
 	 */
-	public void addExpression(Node newExpression)
-	{
+	public void addExpression(Node newExpression) {
 		this.sub_expr.add(newExpression);
 	}
-	
+
 	/**
 	 * 
 	 * @param index
 	 * @return
 	 */
-	public Node getExpression(int index)
-	{
-		if(!sub_expr.isEmpty())
+	public Node getExpression(int index) {
+		if (!sub_expr.isEmpty())
 			return this.sub_expr.get(index);
-		else return null;
+		else
+			return null;
 	}
-	
+
 	/**
 	 * 
 	 */
-	public String toString ()
-	{
-		String nodeString = this.expression.toString() + '<' + this.linePosition + '>';
+	public String toString() {
+		String nodeString = this.expression.toString() + '<'
+				+ this.linePosition + '>';
 
-		if(this.sub_expr.size() > 0)
-		{
+		if (this.sub_expr.size() > 0) {
 			nodeString += ":{";
-		for(Node n: this.sub_expr)
-			nodeString = nodeString + n.toString() + ',';
-		
-		if(nodeString.endsWith(","))
-			nodeString = nodeString.substring(0, nodeString.lastIndexOf(','));
-		nodeString += "}";
+			for (Node n : this.sub_expr)
+				nodeString = nodeString + n.toString() + ',';
+
+			if (nodeString.endsWith(","))
+				nodeString = nodeString.substring(0,
+						nodeString.lastIndexOf(','));
+			nodeString += "}";
 		}
-		return nodeString; 
+		return nodeString;
 	}
-	
+
 	/**
 	 * 
 	 * @return
 	 */
-	public int getSize()
-	{
+	public int getSize() {
 		int size = 1;
 
-		for(Node n: this.sub_expr)
+		for (Node n : this.sub_expr)
 			size += n.getSize();
 		return size;
 	}
-	
+
+	public int findExpression (ParseGrammer.Expr target)
+	{
+		int targetPosition = -1;
+		if(this.expression.isFunCall())
+		{
+			if(this.expression.funCall.equals(target.funCall))
+				targetPosition = this.linePosition;
+			else
+				{for(Node n: this.sub_expr)
+				{
+					if(n.getExpression().isFunCall)
+						targetPosition = n.findExpression(target);
+					if(targetPosition != -1)
+						break;
+				}}}
+		else
+		{
+			if(this.expression.value.equals(expression.value))
+				targetPosition = this.linePosition;
+		}
+		return targetPosition;
+	}
 }
