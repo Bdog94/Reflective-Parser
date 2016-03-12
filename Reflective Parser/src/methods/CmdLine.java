@@ -1,26 +1,28 @@
 package methods;
 
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Enumeration;
+//import java.net.URL;
+//import java.net.URLClassLoader;
+//import java.util.Enumeration;
 import java.util.Scanner;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
+//import java.util.jar.JarEntry;
+//import java.util.jar.JarFile;
+//import java.util.zip.ZipEntry;
 
 public class CmdLine {
 	
 	
 	
+	Reflection r;
 	
 	
-	
-	
+	public CmdLine(){
+		Reflection r = new Reflection();
+	}
 	
 	/**
 	 *  This method will display the users options when running this compiler.
 	 */
-	public static void startMessage() {
+	public void startMessage() {
 		System.out.println("q \t : Quit the program.\n"
 				+ "v \t : Toggle verbose mode (stack traces).\n"
 				+ "f \t : List all known functions.\n"
@@ -30,12 +32,12 @@ public class CmdLine {
 				+ "calls of the form '(identifier {expression}*)'");
 	} 
     
-	
+/*	
 	
 	/**
 	 * This method will display the functions that the user may use in the command line
-	 */
-	public static void functionList() {
+	 *
+	public void functionList() {
 		System.out.println("Function List:\n"
 				+ "(add string string) : string\n"
 				+ "(add float float) : float\n"
@@ -52,7 +54,7 @@ public class CmdLine {
 				+ "(dec float) : float\n"
 				+ "(len string) : int\n");
 	}
-	
+*/	
 	
 	/**
 	 * Prints the synopsis of what the program can do and what commands it may take.
@@ -65,14 +67,16 @@ public class CmdLine {
 	}
 	
 	
-	
+/*	
 	/**
 	 * This is the primary part of the compiler after correct commands have been called from the class. 
 	 * This will loop infinitely until key 'q' has been pressed and it quits the function
 	 * 
-	 */
+	 *
 	public static void mainMenu() {
 		Scanner keyboard = new Scanner(System.in);
+		Parser p = new Parser();
+		ParseTree finalAnswer = null;
 		boolean keepRunningParser = true;
 		//if verbose is on, track code
 		if (Debug.isVerbose) {
@@ -92,7 +96,10 @@ public class CmdLine {
 					Debug.setIsVerbose(false);			//otherwise just turn it off
 				}
 			} else if (userIn.equals("f")) {		//If the user inputs 'f', we display the function list
-				functionList();
+				//functionList();
+				r.printFuncalls(r.o);
+				
+				
 			} else {
 				boolean validBrackets = checkBrackets(userIn); //first checks the brackets on the input
 				boolean validInput = invalidFunc(userIn); //then checks if the input is valid at all
@@ -100,17 +107,26 @@ public class CmdLine {
 					System.out.println("Matching braces error.");
 				} else if (validInput == false) {
 					System.out.println("Input to be calculated is invalid.");
-				} //else { 								//if both tests pass, then input will be processed through recursion tree
-					//finalAnswer = this.treeTime(userInput);
-					//if (finalAnswer != null) {
-						//System.out.println("finalAnswer");
+				} else { //if both tests pass, then input will be processed through recursion tree
+					try{
+						finalAnswer = p.parseLine(userIn);
+					}
+					catch(Exception e){
+						e.printStackTrace();
+					}
+					if (finalAnswer != null) {
+						System.out.println(finalAnswer);
 						//Errors.setInput("userInput"); //gets input from user for error handling
-					//}
+					}
 				}
 			}
+			
 		}
+	}
 		
-		
+*/
+	
+	/*
 		
 		/**
 		 * This method checks to see if the input that a user entered is valid
@@ -119,7 +135,7 @@ public class CmdLine {
 		 * Eg. ((2+2)) is valid, but it has too many brackets and will return true
 		 * @param userIn A string that the user inputed via the command line
 		 * @return true if invalid, false if valid
-		 */
+		 *
 	public static boolean invalidFunc(String userIn){
 		//if verbose is on, track code
 		if (Debug.isVerbose) {
@@ -131,7 +147,7 @@ public class CmdLine {
 		char[] alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 			
 		// Simple case: check if one function call is balanced and has proper syntax
-		if (checkBrackets(userIn) == true) /*&& (tree.funcall(userIn))*/ {
+		if (checkBrackets(userIn) == true) /*&& (tree.funcall(userIn))* {
 			return false;
 		} 
 			
@@ -154,18 +170,17 @@ public class CmdLine {
 		return false;
 	}
 	
-	
+/*
+ 	
+/*
 
 	/**
-	 * The purpose of this function is to ensure that there is a valid/even number of brackets
-	 * in the calculation that the user has specified. 
-	 * <p>
-	 * This function will also check to see whether or not a right brace will exist before
-	 * a left brace. If so, then a false value will return. Otherwise it should return true.
+	 * This function is to check the balance of brackets with a string, it checks to see if a right brace 
+	 * is before a left brace, if that is the case, it will return false. Otherwise return true
 	 * 
-	 * @param userIn the calculation that the user has entered as input
-	 * @return The boolean value that will inform whether or not the brackets check is valid or not.
-	 */
+	 * @param userIn calculation user has entered 
+	 * @return true if brackets in calculation are valid, false otherwise
+	 *
 	public static boolean checkBrackets (String userIn) {
 		//if verbose is on, track code
 		if (Debug.isVerbose) {
@@ -191,18 +206,22 @@ public class CmdLine {
 		}
 		return true;
 	}
+/*
 
-	
 	/**
 	 * 
 	 * @param args - System arguments given in command line
-	 */
+	 *
+	*/
 	
-	public static void argCheck(String[] args){
-		LoadedJar loader = new LoadedJar();
+	
+	/*
+	public void argCheck(String[] args){
+		//LoadedJar loader = new LoadedJar();
+		//This block of code is placed in a try and catch block to handle possible errors
 		
-		//This block of code is embedded in a try catch to keep track of non-fatal errors
 		try {
+			
 			char[] inputAsArray = null;
 
 			if (args.length == 0) {
@@ -219,76 +238,80 @@ public class CmdLine {
 			else if (((args[0].equals("-v") || args[0].equals("--verbose")) && args[1].contains(".jar") && args.length == 3)
 					|| (args[0].equals("-v") || args[0].equals("--verbose")) && args[1].contains(".jar") && args.length == 2){
 				Debug.setIsVerbose(true); //set verbose to true if first argument is -v or --verbose, and check if a jar file is in the arguments.
-				System.out.println("Running in verbose mode...");		
+				System.out.println("Running in verbose mode...");	
+				
+				
 				if (jarValid(args[1])) { // Check if jar file is valid
 					if (args.length == 2) {  // Check if defaulted "Commands" class is in the jar file
-						if (isClassValid(args[1], "Commands")) {	//check if class has methods
-							loader.loadJarClass(args[1], "Commands"); //load jar class with commands as argument
-							mainMenu();
+						if (classValid(args[1], "Commands")) {	//check if class has methods
+								//call main menu 
+								r.setUpReflection(args[1], "Commands");
+								mainMenu();
 						} 
 						else {
-							System.out.println("Could not find class: Commands");
+							System.out.println("Could not find class: Commands"); //otherwise commands havnt been found
 						}
 					} 
 					else {
-						if (isClassValid(args[1], args[2])) { // Check if class argument is in the jar file
-							loader.loadJarClass(args[1], args[2]);
-							mainMenu();
+						if (classValid(args[1], args[2])) { // Check if class argument is in the jar file
+							r.setUpReflection(args[1], args[2]);
+							mainMenu(); //call main menu
+							// send kyle reflection object
 						} 
 						else {
-							System.out.println("Could not find class: " + args[2]);
+							System.out.println("Could not find class: " + args[2]); //could not find class otherwise
 						}
 					}
 				} 
 				else {
-					System.out.println("Could not find jar file: " + args[1]);
+					System.out.println("Could not find jar file: " + args[1]); // jar file not found 
 				}
 			//if calls for merely the jar file
 			} 
+			
+			
 			else if ((args[0].contains(".jar") && args.length == 2) || (args[0].contains(".jar") && args.length == 1)) {
-				Debug.setIsVerbose(false);
+				Debug.setIsVerbose(false); //verbose mode set to false
 				if (jarValid(args[0])) { // Check if jar file is valid
 					if (args.length == 1) { // Check if defaulted "Commands" class is in the jar file
-						if (isClassValid(args[0], "Commands")) {
-							loader.loadJarClass(args[0], "Commands");
-							mainMenu();
+						if (classValid(args[0], "Commands")) { 
+							mainMenu(); //call main menu
 						} 
 						else {
-							System.out.println("Could not find class: Commands");
+							System.out.println("Could not find class: Commands"); //otherwise class "commands" not found
 						}
 					} 
 					else {
-						if (isClassValid(args[0], args[1])) { // Check if class argument is in the jar file
-							loader.loadJarClass(args[0], args[1]);
-							mainMenu();
+						if (classValid(args[0], args[1])) { // Check if class argument is inside of the jar file
+							mainMenu(); //call main menu
 						} 
 						else {
-							System.out.println("Could not find class: " + args[1]);
+							System.out.println("Could not find class: " + args[1]); //Given class not found
 						}
 					}
 				} 
 				else {
-					System.out.println("Could not find jar file: " + args[0]);
+					System.out.println("Could not find jar file: " + args[0]); // could not find given jar file
 				}
-			//default output if none of the above apply
+			//If none of the above apply, do this
 			} 
 			else {
-				inputAsArray = args[0].toCharArray();
+				inputAsArray = args[0].toCharArray(); // move argument into an an array of chars
 				if (Character.valueOf(inputAsArray[0]) == '-') {
-					System.out.println("Unrecognized qualifier '" + inputAsArray[1] + "' in '" + args[0] + "'");
-					printSummary();
+					System.out.println("Unrecognized qualifier '" + inputAsArray[1] + "' in '" + args[0] + "'"); //unrecognized qualifier
+					printSummary(); // print summary of program
 				} 
 				else {
-					System.out.println("Unrecognized qualifier '" + inputAsArray[0] + "' in '" + args[0] + "'");
-					printSummary();
+					System.out.println("Unrecognized qualifier '" + inputAsArray[0] + "' in '" + args[0] + "'");// unrecognized qualifier
+					printSummary(); //print summary
 				}
 			}
 		} 
-		catch (Throwable e1){
-			//If verbose is on it will print ut the stack trace of the given error 
+		catch (Exception e){
+			//If verbose is on it will print it the stack trace of the given error 
 			if (Debug.isVerbose) { //error begins
 				//Errors.beginError();
-				//e1.printStackTrace(System.out);				//prints out specified stack trace from the given error
+				e.printStackTrace(/*System.out*);				//prints out specified stack trace from the given error
 				//returns back to normal execution
 				mainMenu();
 			}
@@ -299,20 +322,146 @@ public class CmdLine {
 		mainMenu();
 		
     }
+
+	*/
 	
+	/**
+	 * This function will check to see what arguments the user has provided for the program, and decide what to do with those given arguments
+	 * @param args - arguments that the user has decided to put inside of the command line when running program
+	 */
+	public void argChecker(String[] args){
+	try{
+		if (args.length == 0){
+			printSummary();
+		}
+		if (checkHelp(args)){
+			printSummary();
+			if (checkVerb(args)){
+				Debug.setIsVerbose(true);
+				System.out.println("Verbose is on");
+			}
+		}
+		else if (args.length == 2){
+			r.setUpReflection(args[0], args[1]);
+			// send kyle reflection object
+			mainMenu();
+		}
+		else if (checkVerb(args) && (args.length == 3)){
+			Debug.setIsVerbose(true);
+			System.out.println("Verbose is on");
+			if (checkHelp(args)){
+				printSummary();
+			}
+			r.setUpReflection(args[1], args[2]);
+			// send kyle reflection object
+			mainMenu();
+		}
+		else{
+			System.out.println("Invalid");
+		}
+	}catch(Exception e){
+		
+	}
+	}
+	
+	/**
+	 * This function will check to see if the user has entered "--help", "?" or "-h" as the first command line argument
+	 * @param args
+	 * @return true if user has asked for help, false otherwise
+	 */
+	public static boolean checkHelp(String[] args){
+		int index = args[0].indexOf('h');
+		if (args[0] == "--help"){
+			return true;
+		}
+		else if (args[0] == "?"){
+			return true;
+		}
+		else if ((index != -1) && (args.length != 1)){
+			System.out.println("Help argument should not come with any other arguments");
+			return true;
+		}
+		else if ((index != -1) && (args.length == 1)){
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean checkVerb(String[] args){
+		int index = args[0].indexOf('v');
+		if (args[0] == "--verbose"){
+			return true;
+		}
+		else if (index != -1){
+			return true;
+		}
+		return false;
+	}
+	
+	
+	public void mainMenu(){
+		Scanner keyboard = new Scanner(System.in);
+		Parser p = new Parser();
+		ParseTree finalAnswer = null;
+		boolean keepRunningParser = true;
+		//if verbose is on, track code
+		if (Debug.isVerbose) {
+			System.out.println("<<< mainMenu() >>>");
+		}
+		
+		startMessage();	//runs the startup message
+		while (keepRunningParser == true) {
+			System.out.print("> ");
+			String userIn = keyboard.nextLine(); //get user input
+			if (userIn.equals("q")) {			//quit if user input is q
+				keepRunningParser = false; //turn keepRunningParser off so that we quit program and exit this main menu loop.
+			}
+			else if (userIn.equals("v")) {	//If user input is v, we toggle verbose
+				if (Debug.isVerbose() == false) {	// check if verbose is off
+					Debug.setIsVerbose(true);		//if verbose is off, we toggle it by turning it on
+				} 
+				else {
+					Debug.setIsVerbose(false);			//otherwise, verbose must be on, so we just turn it off
+				}
+			} 
+			else if (userIn.equals("f")) {		//If user input is f, we display the functions
+				r.printFuncalls(r.o); //print function list for the given jar and class
+				
+				
+			} 
+			else {
+					try{
+						finalAnswer = p.parseLine(userIn);
+					}
+					catch(Exception e){
+						e.printStackTrace();
+					}
+					if (finalAnswer != null) {
+						System.out.println(finalAnswer);
+						//Errors.setInput("userInput"); //gets input from user for error handling
+					}
+			}
+		}
+		keyboard.close();
+			
+	}
+	
+
+/*	
 	
 	/**
 	 * Checks if jar file is in the class path and is valid
 	 * @param jarName is the name of the jar file
 	 * @return true if jar file is acceptable, false otherwise
 	 * Based on one of the answers from http://stackoverflow.com/questions/20152195/how-to-check-if-a-jar-file-is-valid
-	 */
+	 *
 	public static boolean jarValid(String jarName) {
+		ZipEntry entry = null;
 		try {
 		        JarFile myJar = new JarFile(jarName); // create my jar file based on the string parameter
 		        Enumeration<? extends ZipEntry> e = myJar.entries(); // Create my entries for the jar file
 		        while(e.hasMoreElements()) { // Loop of entries in the jarfile
-		            ZipEntry entry = e.nextElement();
+		            entry = e.nextElement();
 		        }
 		        return true; //Return true if no exception has been thrown
 			} catch(Exception myException) {
@@ -326,8 +475,8 @@ public class CmdLine {
 	 * @param jarName is the name of the jar file, className is the name of the class
 	 * @return true if class is acceptable, false otherwise
 	 * Based on one of the answers from http://stackoverflow.com/questions/11016092/how-to-load-classes-at-runtime-from-a-folder-or-jar
-	 */
-	public static boolean isClassValid(String jarName, String className) {
+	 *
+	public static boolean classValid(String jarName, String className) {
 		try {
 			JarFile jarFile = new JarFile(jarName); // Creates jarfile from parameter
 			Enumeration e = jarFile.entries(); // Creates entries from the jarfile
@@ -352,6 +501,6 @@ public class CmdLine {
 
 	
 	
-	
+*/	
 	
 }
