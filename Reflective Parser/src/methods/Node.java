@@ -82,7 +82,7 @@ public class Node {
 	 * @return
 	 */
 	public Node findSubExpr(int index) {
-		if (!sub_expr.isEmpty())
+		if (!sub_expr.isEmpty() && index < sub_expr.size())
 			return this.sub_expr.get(index);
 		else
 			return null;

@@ -1,6 +1,7 @@
 package methods;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Scanner;
 import java.util.regex.PatternSyntaxException;
 
@@ -19,9 +20,11 @@ public class Parser {
 
 	public static void main(String[] args) {
 		Parser p = new Parser();
-
+		ParseTree pt = new ParseTree();
+		Node n;
+		
 			p.parseTest( "(call 234 (call 234)");
-			p.parseTest( "(call 234");
+			p.parseTest( "(add 1 1)");
 			p.parseTest( "(call)");
 			p.parseTest( "call)");
 			p.parseTest( "()");
@@ -31,20 +34,18 @@ public class Parser {
 			p.parseTest( "(call 234 (call (call 1234 234) 234) (call 234))");
 			p.parseTest( "(call words (call 234))");
 			p.parseTest("(call \"words\" (call 234))");
-		
-			try {
-				ParseTree t = p.parseLine("(call 234 (call 234))");
-				System.out.println(t.head.findSubExpr(1).findSubExpr(0).getExpression());
-				System.out.println(t.head.findExpression(t.head.findSubExpr(1).findSubExpr(0).getExpression()));
-			} catch (BadParseException e) {
-				System.out.println(e.toString());
-				for(int i = 0; i < e.columnNumber; i++)
-				{
-					System.out.print('-');
-				}
-				System.out.println('^');
-			}
-				
+		try
+		{
+			pt= p.parseLine("(add 1 1)");
+			System.out.println(pt.toString());
+			n = pt.head;
+			System.out.println(n.toString());
+			System.out.println(n.getExpression().toString());
+		}
+		catch(ParseException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	private void parseTest (String a)
@@ -53,27 +54,15 @@ public class Parser {
 			ParseTree t = this.parseLine(a);
 			System.out.println("Parsed input of \"" + a + "\": ");
 			System.out.println(t.toString());
-		} catch (BadParseException e) {
+		} catch (ParseException e) {
 			System.out.println(e.toString());
 			System.out.println(a);
-			for(int i = 0; i < e.columnNumber; i++)
+			for(int i = 0; i < e.getErrorOffset(); i++)
 			{
 				System.out.print('-');
 			}
 			System.out.println('^');
 		}
-	}
-	
-	public class BadParseException extends IOException
-	{
-		int columnNumber;
-		
-		public BadParseException(String message, int columnNumber)
-		{
-			super(message);
-			this.columnNumber = columnNumber;
-		}
-		
 	}
 	
 	/**
@@ -82,7 +71,7 @@ public class Parser {
 	 * @return
 	 * @throws Exception
 	 */
-	public ParseTree parseLine(String input) throws BadParseException {
+	public ParseTree parseLine(String input) throws ParseException {
 		ParseTree parsedInput = new ParseTree();
 		this.input = input;
 		this.position = 0;
@@ -107,17 +96,17 @@ public class Parser {
 	 * @return
 	 * @throws Exception
 	 */
-	private Node parseFuncall() throws BadParseException {
+	private Node parseFuncall() throws ParseException {
 		Node n = null;
 		char nextChar = ' ';
 
 		if (input.indexOf(' ', this.position) == input.indexOf(')',
 				this.position) || input.indexOf(')', this.position) < 0)
-			throw new BadParseException("Improper function call syntax", position);
+			throw new ParseException("Improper function call syntax", position);
 		if (input.indexOf(' ', this.position) == -1
 				&& input.indexOf(')', this.position) != -1) {
 			if(input.substring(this.position, input.indexOf(')', this.position)).isEmpty())
-				throw new BadParseException("Empty function call found.", position);
+				throw new ParseException("Empty function call found.", position);
 			n = new Node(convertToFuncall(input.substring(this.position,
 					input.indexOf(')', this.position))), this.position);
 			this.position = input.indexOf(')', this.position) + 1;
@@ -158,7 +147,7 @@ public class Parser {
 					break;
 				}
 				if (input.length() <= this.position)
-					throw new BadParseException(
+					throw new ParseException(
 							"Input line ended before the end of a function call was found", position);
 			}
 		}
@@ -172,7 +161,7 @@ public class Parser {
 	 * @throws IOException
 	 */
 	private ParseGrammer.Expr convertToFuncall(String target)
-			throws BadParseException {
+			throws ParseException {
 		ParseGrammer.Expr converted = null;
 
 		if (target.toLowerCase().charAt(0) <= 'z'
@@ -181,12 +170,12 @@ public class Parser {
 			for (char c : target.toCharArray()) {
 				if (isAlphanumeric(c))
 					continue;
-				throw new BadParseException("Invalid identifier format", position);
+				throw new ParseException("Invalid identifier format", position);
 			}
 			converted = new ParseGrammer().new Expr(
 					new ParseGrammer().new Funcall(target));
 		} else {
-			throw new BadParseException("Invalid identifier format", position);
+			throw new ParseException("Invalid identifier format", position);
 		}
 		return converted;
 	}
@@ -209,7 +198,7 @@ public class Parser {
 	 * @return
 	 * @throws Exception
 	 */
-	private ParseGrammer.Expr convertToValue(String target) throws BadParseException {
+	private ParseGrammer.Expr convertToValue(String target) throws ParseException {
 		ParseGrammer p = new ParseGrammer();
 		ParseGrammer.Expr converted = null;
 		ParseGrammer.Value val;
@@ -240,7 +229,7 @@ public class Parser {
 
 			} else {
 				converter.close();
-				throw new BadParseException("Invalid value", position);
+				throw new ParseException("Invalid value", position);
 			}
 		}
 		return converted;
