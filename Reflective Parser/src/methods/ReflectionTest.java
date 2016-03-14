@@ -4,12 +4,13 @@ import static org.junit.Assert.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.text.ParseException;
 
 import junit.framework.*;
 import methods.ParseGrammer.Expr;
 import methods.ParseGrammer.Funcall;
 import methods.ParseGrammer.Value;
-import methods.Parser.BadParseException;
+
 
 import org.junit.Test;
 
@@ -21,7 +22,7 @@ public class ReflectionTest extends TestCase{
 	}
 	
 	@Test 
-	public void testFuncallNotNull() throws InvalidValueException, InvalidFunctionCallException, InvalidExprSetException{
+	public void testFuncallNotNull() throws InvalidValueException, InvalidFunctionCallException{
 		Reflection r = new Reflection();
 		r.setUpReflection("commands.jar","Commands");
 		ParseGrammer p = new ParseGrammer();
@@ -38,7 +39,7 @@ public class ReflectionTest extends TestCase{
 	}
 	
 	@Test 
-	public void testFuncallOneParam() throws InvalidValueException, InvalidFunctionCallException, InvalidExprSetException{
+	public void testFuncallOneParam() throws InvalidValueException, InvalidFunctionCallException{
 		Reflection r = new Reflection();
 		r.setUpReflection("commands.jar","Commands");
 		ParseGrammer p = new ParseGrammer();
@@ -81,7 +82,7 @@ public class ReflectionTest extends TestCase{
 		}
 	
 	@Test 
-	public void testFuncallWithaFuncallWithin() throws InvalidValueException, InvalidFunctionCallException, InvalidExprSetException {
+	public void testFuncallWithaFuncallWithin() throws InvalidValueException, InvalidFunctionCallException{
 		Reflection r = new Reflection();
 		r.setUpReflection("commands.jar","Commands");
 		ParseGrammer p = new ParseGrammer();
@@ -102,14 +103,14 @@ public class ReflectionTest extends TestCase{
 	}
 	
 	//@Test
-	public void testIntegratingParsingAndReflection() throws InvalidFunctionCallException, InvalidExprSetException{
+	public void testIntegratingParsingAndReflection() throws InvalidFunctionCallException{
 		Reflection r = new Reflection();
 		r.setUpReflection("commands.jar","Commands");
 		Parser p = new Parser();
 		ParseTree pt = null;
 		try {
 			pt = p.parseLine("(add 1 1)");
-		} catch (BadParseException e) {
+		} catch (ParseException e) {
 			assertTrue(false);
 		}
 		Node n = pt.head;

@@ -254,7 +254,7 @@ public class Reflection {
 		}
 	}
 	
-	public Value funCall(Expr e ) throws InvalidFunctionCallException, InvalidExprSetException{
+	public Value funCall(Expr e ) throws InvalidFunctionCallException{
 		if (e.isFunCall){
 			return funCall(e.getFunCall(), e.getFunCall().getExpr_set());
 		}
@@ -263,7 +263,7 @@ public class Reflection {
 	}
 	
 	public Value funCall(Funcall f, Expr[] elem_set)
-			throws InvalidFunctionCallException, InvalidExprSetException  {
+			throws InvalidFunctionCallException  {
 		
 
 		String identifier = f.ident;
@@ -324,33 +324,7 @@ public class Reflection {
 			result =  p.new Value(method.invoke(o, arguments));
 		}
 		catch (IllegalArgumentException e) {
-			Object[] params = method.getParameterTypes();
-			Value illegalVal = null;
-			for (Object o:arguments){
-				Value v = (Value) o;
-				
-				for (Object p_2:params){
-					if (p_2.getClass().getName().toLowerCase().contains("float")){
-						if (! v.isContainFloat()){
-							illegalVal = v;
-						}
-					} else if (p_2.getClass().getName().toLowerCase().contains("int")){
-						if ( ! v.isContainInt()){
-							illegalVal = v;
-						}
-					} else {
-						if ( !v.isContainString()){
-							illegalVal = v;
-						}
-					}
-				}
-				if (illegalVal !=null){
-					break;
-				}
-				
-			}
-			ParseGrammer p_1 = new ParseGrammer();
-			throw new InvalidExprSetException (elem_set, f);
+			e.printStackTrace();
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
