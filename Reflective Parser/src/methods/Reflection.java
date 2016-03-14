@@ -20,6 +20,7 @@ public class Reflection {
 	
 	
 	public static void main(String[] args) {
+	
 		
 	}
 	//Set up a object
@@ -38,12 +39,12 @@ public class Reflection {
 		
 		File f = new File(fileName);
 		
-		
+		/*
 		if (!f.exists()){
 			System.err.print("Could not load jar file: " + fileName);
 			System.exit(-5);
 		}
-		
+		*/
 		
 		URL url = null;
 		
@@ -79,14 +80,14 @@ public class Reflection {
 			//Invoke the addUrl method with the url 
 		   method.invoke(sysloader,new Object[]{ url });
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.print("Could not load jar file: " + fileName);
+			System.exit(-5);
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.print("Could not load jar file: " + fileName);
+			System.exit(-5);
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.print("Could not load jar file: " + fileName);
+			System.exit(-5);
 		}
 		
 		//Loads the class into c
@@ -253,7 +254,7 @@ public class Reflection {
 		}
 	}
 	
-	public Value funCall(Expr e ){
+	public Value funCall(Expr e ) throws InvalidFunctionCallException, InvalidExprSetException{
 		if (e.isFunCall){
 			return funCall(e.getFunCall(), e.getFunCall().getExpr_set());
 		}
@@ -261,7 +262,8 @@ public class Reflection {
 		return p.new Value("s");
 	}
 	
-	public Value funCall(Funcall f, Expr[] elem_set) {
+	public Value funCall(Funcall f, Expr[] elem_set)
+			throws InvalidFunctionCallException, InvalidExprSetException  {
 		
 
 		String identifier = f.ident;
@@ -303,16 +305,64 @@ public class Reflection {
 				parameters[j] = String.class;
 				j++;
 			}
+			
 		}
 		Method method = null;
 		Class c = o.getClass();
 		Value result = null;
 		try{
 			method =  c.getMethod(identifier, parameters);
-			result =  p.new Value(method.invoke(o, arguments));
-		} catch (Exception e){
+		}
+		catch( NoSuchMethodException e){
+			throw new InvalidFunctionCallException(f);
+			
+		} catch (Exception e) {
+			
 			e.printStackTrace();
 		}
+		try {
+			result =  p.new Value(method.invoke(o, arguments));
+		}
+		catch (IllegalArgumentException e) {
+			Object[] params = method.getParameterTypes();
+			Value illegalVal = null;
+			for (Object o:arguments){
+				Value v = (Value) o;
+				
+				for (Object p_2:params){
+					if (p_2.getClass().getName().toLowerCase().contains("float")){
+						if (! v.isContainFloat()){
+							illegalVal = v;
+						}
+					} else if (p_2.getClass().getName().toLowerCase().contains("int")){
+						if ( ! v.isContainInt()){
+							illegalVal = v;
+						}
+					} else {
+						if ( !v.isContainString()){
+							illegalVal = v;
+						}
+					}
+				}
+				if (illegalVal !=null){
+					break;
+				}
+				
+			}
+			ParseGrammer p_1 = new ParseGrammer();
+			throw new InvalidExprSetException (elem_set, f);
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidValueException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		
 		//Invoke the class here
 		return result;

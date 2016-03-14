@@ -9,6 +9,7 @@ import junit.framework.*;
 import methods.ParseGrammer.Expr;
 import methods.ParseGrammer.Funcall;
 import methods.ParseGrammer.Value;
+import methods.Parser.BadParseException;
 
 import org.junit.Test;
 
@@ -20,7 +21,7 @@ public class ReflectionTest extends TestCase{
 	}
 	
 	@Test 
-	public void testFuncallNotNull() throws InvalidValueException{
+	public void testFuncallNotNull() throws InvalidValueException, InvalidFunctionCallException, InvalidExprSetException{
 		Reflection r = new Reflection();
 		r.setUpReflection("commands.jar","Commands");
 		ParseGrammer p = new ParseGrammer();
@@ -37,7 +38,7 @@ public class ReflectionTest extends TestCase{
 	}
 	
 	@Test 
-	public void testFuncallOneParam() throws InvalidValueException{
+	public void testFuncallOneParam() throws InvalidValueException, InvalidFunctionCallException, InvalidExprSetException{
 		Reflection r = new Reflection();
 		r.setUpReflection("commands.jar","Commands");
 		ParseGrammer p = new ParseGrammer();
@@ -52,7 +53,7 @@ public class ReflectionTest extends TestCase{
 	}
 	
 	@Test
-	public void testFuncallTwoParam() throws InvalidValueException{
+	public void testFuncallTwoParam() throws InvalidValueException, InvalidFunctionCallException, InvalidExprSetException{
 		Reflection r = new Reflection();
 		r.setUpReflection("commands.jar","Commands");
 		ParseGrammer p = new ParseGrammer();
@@ -80,7 +81,7 @@ public class ReflectionTest extends TestCase{
 		}
 	
 	@Test 
-	public void testFuncallWithaFuncallWithin() throws InvalidValueException {
+	public void testFuncallWithaFuncallWithin() throws InvalidValueException, InvalidFunctionCallException, InvalidExprSetException {
 		Reflection r = new Reflection();
 		r.setUpReflection("commands.jar","Commands");
 		ParseGrammer p = new ParseGrammer();
@@ -100,17 +101,16 @@ public class ReflectionTest extends TestCase{
 	
 	}
 	
-	@Test
-	public void testIntegratingParsingAndReflection(){
+	//@Test
+	public void testIntegratingParsingAndReflection() throws InvalidFunctionCallException, InvalidExprSetException{
 		Reflection r = new Reflection();
 		r.setUpReflection("commands.jar","Commands");
 		Parser p = new Parser();
 		ParseTree pt = null;
 		try {
 			pt = p.parseLine("(add 1 1)");
-		} catch (Exception e) {
-
-			e.printStackTrace();
+		} catch (BadParseException e) {
+			assertTrue(false);
 		}
 		Node n = pt.head;
 		
@@ -118,10 +118,33 @@ public class ReflectionTest extends TestCase{
 		
 		Funcall f = expr.getFunCall();
 		Expr[] args = f.expr_set;
-		
-		Value v = r.funCall(f,args);
+		assertTrue(args != null);
+		Value v = r.funCall(expr);
 		assertEquals(v.getVal_int(), 2);
 	}
+	
+	@Test
+	public void testInvalidFuncall() throws InvalidValueException{
+		Reflection r = new Reflection();
+		r.setUpReflection("commands.jar","Commands");
+		ParseGrammer p = new ParseGrammer();
+		
+		
+		
+		Funcall f = p.new Funcall("len", 1, new Expr[] { p.new Expr( p.new Value((Object) "x")) });
+		Expr[] e = new Expr[] { p.new Expr( p.new Value((Object) "x")) };
+		try{
+		Value v = r.funCall(f, e);
+		} catch (InvalidFunctionCallException e2){
+			assertTrue(true);
+		} catch (Exception e3){
+			assertTrue(false);
+		}
+		
+		//assertTrue(false);
+		
+	}
+	
 	
 	
 	}
