@@ -54,7 +54,7 @@ public class ReflectionTest extends TestCase{
 	}
 	
 	@Test
-	public void testFuncallTwoParam() throws InvalidValueException, InvalidFunctionCallException, InvalidExprSetException{
+	public void testFuncallTwoParam() throws InvalidValueException, InvalidFunctionCallException{
 		Reflection r = new Reflection();
 		r.setUpReflection("commands.jar","Commands");
 		ParseGrammer p = new ParseGrammer();
