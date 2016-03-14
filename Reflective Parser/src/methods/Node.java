@@ -3,7 +3,7 @@ package methods;
 import java.util.ArrayList;
 
 /**
- * 
+ * The pieces that make a ParseTree
  * @author Kyle Perry
  *
  */
@@ -19,7 +19,7 @@ public class Node {
 	}
 
 	/**
-	 * 
+	 * Create a node using the given expression and position in a parsed line
 	 * @param expression
 	 */
 	public Node(ParseGrammer.Expr expression, int position) {
@@ -30,7 +30,7 @@ public class Node {
 
 	/**
 	 * 
-	 * @return
+	 * @return the expression contained in the node
 	 */
 	public ParseGrammer.Expr getExpression() {
 		return this.expression;
@@ -38,7 +38,7 @@ public class Node {
 
 	/**
 	 * 
-	 * @return
+	 * @return the position in the input line of the node
 	 */
 	public int getLinePosition() {
 		return linePosition;
@@ -46,40 +46,40 @@ public class Node {
 
 	/**
 	 * 
-	 * @return
+	 * @return the list of subexpressions of the node (or the children of it)
 	 */
 	public ArrayList<Node> getSubExpr() {
 		return this.sub_expr;
 	}
 
 	/**
-	 * 
-	 * @param expression
+	 * Sets the expression of the node
+	 * @param expression to be set
 	 */
 	public void setFunCall(ParseGrammer.Expr expression) {
 		this.expression = expression;
 	}
 
 	/**
-	 * 
-	 * @return
+	 * Gets the number of subexpressions this node has
+	 * @return the number of subexpressions
 	 */
 	public int numExpressions() {
 		return sub_expr.size();
 	}
 
 	/**
-	 * 
-	 * @param newExpression
+	 * Add a new sub expression to the list of sub expressions
+	 * @param newExpression the expression to add to the list
 	 */
 	public void addExpression(Node newExpression) {
 		this.sub_expr.add(newExpression);
 	}
 
 	/**
-	 * 
-	 * @param index
-	 * @return
+	 * finds a subexpression in the list at the given index, or null if none exists
+	 * @param index the index to find the element at
+	 * @return null if no element with that index exists, or the Node at that index
 	 */
 	public Node findSubExpr(int index) {
 		if (!sub_expr.isEmpty() && index < sub_expr.size())
@@ -89,7 +89,8 @@ public class Node {
 	}
 
 	/**
-	 * 
+	 * Converts a node to a string in the format:
+	 * {thisnode<position>(if a funcall, then :subexpr1<pos1>,...,subexprn<posn>)}
 	 */
 	public String toString() {
 		String nodeString = this.expression.toString() + '<'
@@ -109,7 +110,7 @@ public class Node {
 	}
 
 	/**
-	 * 
+	 * returns the size of the node, counting itself
 	 * @return
 	 */
 	public int getSize() {
