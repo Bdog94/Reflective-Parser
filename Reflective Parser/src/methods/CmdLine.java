@@ -5,7 +5,7 @@ import java.text.ParseException;
 import java.util.Scanner;
 
 /**
- * This class is where the argument erro checking is done and where the user enters his inputs and makes his choices of what to do within the program.
+ * This class is where the argument error checking is done and where the user enters his inputs and makes his choices of what to do within the program.
  * @author Arthur Iwaniszyn
  *
  */
@@ -258,8 +258,19 @@ public class CmdLine {
 					try{
 						finalAnswer = p.parseLine(userIn); //pass user input int parseLine
 					}
-					catch(Exception e){ //exception handling
-						e.printStackTrace();
+					catch(ParseException e){ //exception handling
+						System.out.println(e.getMessage());
+						System.out.println(userIn);
+						for (int i = 0; i < e.getErrorOffset(); i++){
+							System.out.print("-");
+						}
+						System.out.println("^");
+						if (Debug.isVerbose){
+							e.printStackTrace();
+						}
+					}
+					catch(Exception e2){
+						
 					}
 					if (finalAnswer != null) {
 						System.out.println(finalAnswer.toString()); //take final answer and print it while converting it to a string
