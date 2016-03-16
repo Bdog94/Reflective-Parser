@@ -19,48 +19,6 @@ public class Parser {
 	private String input;
 	private int position;
 
-	public static void main(String[] args) {
-		Parser p = new Parser();
-		ParseTree pt = new ParseTree();
-		Node n;
-
-		p.parseTest("(call 234 (call 234)");
-		p.parseTest("11");
-		p.parseTest("(call)");
-		p.parseTest("call)");
-		p.parseTest("()");
-		p.parseTest("(call 234 -345 +567)");
-		p.parseTest("(call -2349876513288765138547)");
-		p.parseTest("(call 2.34 +123.53245 -8213.2735)");
-		p.parseTest("(call 234 (call (call 1234 234) 234) (call 234))");
-		p.parseTest("(call words (call 234))");
-		p.parseTest("(call \" (call 234))");
-		try {
-			pt = p.parseLine("(add 1 1)");
-			System.out.println(pt.toString());
-			n = pt.head;
-			System.out.println(n.toString());
-			System.out.println(n.getExpression().toString());
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void parseTest(String a) {
-		try {
-			ParseTree t = this.parseLine(a);
-			System.out.println("Parsed input of \"" + a + "\": ");
-			System.out.println(t.toString());
-		} catch (ParseException e) {
-			System.out.println(e.toString());
-			System.out.println(a);
-			for (int i = 0; i < e.getErrorOffset(); i++) {
-				System.out.print('-');
-			}
-			System.out.println('^');
-		}
-	}
-
 	/**
 	 * Takes a string and parses it into it's expressions
 	 * 
