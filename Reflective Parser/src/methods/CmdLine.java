@@ -19,7 +19,7 @@ public class CmdLine {
 	
 	
 	public CmdLine(){
-		Reflection r = new Reflection();
+		r = new Reflection();
 	}
 	
 	/**
@@ -132,6 +132,7 @@ public class CmdLine {
 			//returns back to normal execution if verbose mode is off 
 			mainMenu();
 		}
+		mainMenu();
 	}
 	
 	
@@ -229,6 +230,7 @@ public class CmdLine {
 		Scanner keyboard = new Scanner(System.in);
 		Parser p = new Parser();
 		ParseTree finalAnswer = null;
+		Reflection ref = new Reflection();
 		boolean keepRunningParser = true;
 		if (Debug.isVerbose) { //track code if verbose is on
 			System.out.println("<<< mainMenu() >>>"); //print main menu
