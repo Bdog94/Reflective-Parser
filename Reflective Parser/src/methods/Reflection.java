@@ -205,6 +205,40 @@ public class Reflection {
 			i++;
 			}
 		}
+	
+	private boolean doesIdentifierExist(String ident) 
+	{
+		for (Funcall f:func)
+		{
+			if (f.ident.equals(ident)){
+				return true;
+			}
+		}
+		return false;
+		
+	}
+	
+	//Gets the jth paramater for for the function with the specified identifier
+	private Class getClassType(String ident, String type, int j)
+	{
+		type.toLowerCase();
+		Method[] methods = c.getMethods();
+		for (int i = 0; i < methods.length; i++)
+		{
+			String methodString = methods[i].getName();	//Name of the ith method
+			int modifier = methods[i].getModifiers();	//Modifier of the method, ie is it final, public, private etc
+			if (Modifier.isStatic(modifier) && methodString.equals(ident)){
+				Class[] parameterTypes = methods[i].getParameterTypes();
+				if (parameterTypes[0].getClass().getSimpleName().toLowerCase().contains(type)){
+					return parameterTypes[j].getClass();
+				}
+				
+			}
+		}
+		return null;
+		
+		
+	}
 				
 	
 	
@@ -290,15 +324,18 @@ public class Reflection {
 		//Create the Objects...
 		Object[] arguments = new Object[elem_set.length];
 		Class[] parameters = new Class[elem_set.length];
+		String type = null;
 		int j = 0;
 		for (Value v:vals){
 			if (v.isContainFloat()){
-				arguments[j] = v.val_float;
+				arguments[j] =new Float( v.val_float);
 				parameters[j] = float.class;
+				type = "float";
 				j++;
 			} else if (v.isContainInt()){
-				arguments[j] = v.val_int;
+				arguments[j] = new Integer(v.val_int);
 				parameters[j] = int.class;
+				type = "int";
 				j++;
 			} else {
 				arguments[j] = v.val_string;
@@ -314,8 +351,29 @@ public class Reflection {
 			method =  c.getMethod(identifier, parameters);
 		}
 		catch( NoSuchMethodException e){
-			throw new InvalidFunctionCallException(f);
+			Class[] parameters2 = new Class[parameters.length];
+			int i2 = 0;
+			for (Class p_2:parameters)
+			{
+				
+				
+				if (type.equals("float")){
+					parameters2[i2] = Float.class;
+				} else if (type.equals("int")){
+					parameters2[i2] = Integer.class;
+				} else {
+					parameters2[i2] = String.class;
+				}
+				i2++;
+				
+			}
+			try 
+			{
+				method = c.getMethod(identifier, parameters2);
+			} catch (Exception e_1){
 			
+			throw new InvalidFunctionCallException(f);
+			}
 		} catch (Exception e) {
 			
 			e.printStackTrace();

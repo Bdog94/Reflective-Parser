@@ -146,6 +146,60 @@ public class ReflectionTest extends TestCase{
 		
 	}
 	
+	@Test
+	public void testDecFuncall() throws InvalidValueException, InvalidFunctionCallException 
+	{
+		Reflection r = new Reflection();
+		r.setUpReflection("commands.jar","Commands");
+		ParseGrammer p = new ParseGrammer();
+		
+		
+		
+		Funcall f = p.new Funcall("dec", 1, new Expr[] { p.new Expr( p.new Value(new Float(1.0))) });
+		Expr[] e = new Expr[] { p.new Expr( p.new Value(new Float(1.0))) };
+		Value v = r.funCall(f, e);
+		
+		assertEquals(v.val_float, 0, 0.001);
+		
+	}
+	
+	@Test
+	public void testIncFuncall() throws InvalidValueException, InvalidFunctionCallException 
+	{
+		Reflection r = new Reflection();
+		r.setUpReflection("commands.jar","Commands");
+		ParseGrammer p = new ParseGrammer();
+		
+		
+		
+		Funcall f = p.new Funcall("inc", 1, new Expr[] { p.new Expr( p.new Value(new Integer(1))) });
+		Expr[] e = new Expr[] { p.new Expr( p.new Value(new Integer(1))) };
+		Value v = r.funCall(f, e);
+		
+		assertEquals(v.val_float, 0, 0.001);
+		
+	}
+	
+	@Test
+	public void testFloatAddFuncall() throws InvalidValueException, InvalidFunctionCallException 
+	{
+		
+		Reflection r = new Reflection();
+		r.setUpReflection("commands.jar","Commands");
+		ParseGrammer p = new ParseGrammer();
+		
+		
+		
+		Funcall f = p.new Funcall();
+		f.ident = "add";
+		Expr[] e = new Expr[] { p.new Expr(p.new Value((Object)(new Float(1.2)))), p.new Expr(p.new Value(new Float(1.9)))};
+		Value v = r.funCall(f, e);
+		
+		assertEquals(v.val_float, 3.1, 0.0001);
+		
+	}
+	
+	
 	
 	
 	}
