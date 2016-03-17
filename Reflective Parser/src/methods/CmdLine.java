@@ -290,9 +290,17 @@ public class CmdLine {
 						try {
 							v = r.funCall(expr);
 						} catch (InvalidFunctionCallException e) {
-							System.out.println("err"); //CHANGE THIS BEFORE SUBMISSION
+							int pos = (finalAnswer.head.findExpression(new ParseGrammer().new Expr(f)));
+							System.out.println(e.toString() + pos);
+							System.out.println(userIn);
+							for(int i = 0; i < pos; i++)
+								System.out.print('-');
+							System.out.println('^');
 							// TODO Auto-generated catch block
-							//e.printStackTrace();
+							if(Debug.isVerbose)
+							{
+								e.printStackTrace();
+							}
 						}
 						if (v != null)
 						{
