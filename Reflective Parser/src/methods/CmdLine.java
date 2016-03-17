@@ -4,6 +4,10 @@ package methods;
 import java.text.ParseException;
 import java.util.Scanner;
 
+import methods.ParseGrammer.Expr;
+import methods.ParseGrammer.Funcall;
+import methods.ParseGrammer.Value;
+
 /**
  * This class is where the argument error checking is done and where the user enters his inputs and makes his choices of what to do within the program.
  * @author Arthur Iwaniszyn
@@ -19,7 +23,7 @@ public class CmdLine {
 	
 	
 	public CmdLine(){
-		Reflection r = new Reflection();
+		r = new Reflection();
 	}
 	
 	/**
@@ -132,6 +136,7 @@ public class CmdLine {
 			//returns back to normal execution if verbose mode is off 
 			mainMenu();
 		}
+		mainMenu();
 	}
 	
 	
@@ -144,7 +149,7 @@ public class CmdLine {
  */
 	public static boolean checkValid(String[] args){
 		if (args[0].startsWith("--")){
-			if ((args[0] == "--verbose") || (args[0] == "--help")){
+			if ((args[0].equals("--verbose")) || (args[0].equals("--help"))){
 				return true;
 			}
 			else{
@@ -229,6 +234,7 @@ public class CmdLine {
 		Scanner keyboard = new Scanner(System.in);
 		Parser p = new Parser();
 		ParseTree finalAnswer = null;
+		Reflection ref = new Reflection();
 		boolean keepRunningParser = true;
 		if (Debug.isVerbose) { //track code if verbose is on
 			System.out.println("<<< mainMenu() >>>"); //print main menu
@@ -273,7 +279,29 @@ public class CmdLine {
 						
 					}
 					if (finalAnswer != null) {
-						System.out.println(finalAnswer.toString()); //take final answer and print it while converting it to a string
+						
+						Node n = finalAnswer.head;
+						
+						Expr expr = (Expr) n.getExpression();
+						
+						Funcall f = expr.getFunCall();
+						Expr[] args = f.expr_set;
+						Value v = null;
+						try {
+							v = r.funCall(expr);
+						} catch (InvalidFunctionCallException e) {
+							System.out.println("err"); //CHANGE THIS BEFORE SUBMISSION
+							// TODO Auto-generated catch block
+							//e.printStackTrace();
+						}
+						if (v != null)
+						{
+							System.out.println(v);
+						} else {
+							System.out.println("Issue with the functioncall"); 	//CHANGE THIS BEFORE SENDING
+						}
+						
+						//System.out.println(finalAnswer.toString()); //take final answer and print it while converting it to a string
 					}
 			}
 		}
