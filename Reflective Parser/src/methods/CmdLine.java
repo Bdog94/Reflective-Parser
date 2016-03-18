@@ -342,7 +342,7 @@ public class CmdLine {
 								System.out.println(v);
 							}
 							else {
-								System.out.println("Issue with the functioncall"); 	//CHANGE THIS BEFORE SENDING
+								System.out.println("Function call returned a null Value."); 	//CHANGE THIS BEFORE SENDING
 							}
 						} catch (InvalidFunctionCallException e) {
 							int pos = (finalAnswer.head.findExpression(new ParseGrammer().new Expr(f)));
@@ -374,7 +374,7 @@ public class CmdLine {
 						}
 					}
 					catch(Exception e2){
-						
+						e2.printStackTrace();
 					}
 					
 			}
