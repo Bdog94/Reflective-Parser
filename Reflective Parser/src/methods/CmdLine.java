@@ -81,29 +81,28 @@ public class CmdLine {
 			String[] userArguments;
 
 			if (args[0].startsWith("-")){ //if user has a qualifier, handle them
-				for (i = 0; i < args.length; i++){
-					if (args[i].startsWith("--") || args[i].startsWith("-")){
-						tempString = args[i];
-						if (checkValidQual(tempString)){
-							if (checkVerbQual(tempString)){
-								askForVerbose = true;
+				for (i = 0; i < args.length; i++){ //loop through arguments
+					if (args[i].startsWith("--") || args[i].startsWith("-")){ //if the arg is a qualifier
+						tempString = args[i]; //create temporary string variable set it to arg
+						if (checkValidQual(tempString)){ //check if valid
+							if (checkVerbQual(tempString)){ //check if it asks for verbose
+								askForVerbose = true; //set verbose flag to true
 							}
-							if(checkHelpQual(tempString)){
-								askForHelp = true;
+							if(checkHelpQual(tempString)){//check if it asks for help
+								askForHelp = true; //set help flag to true
 							}
 						}
-						else{
+						else{ //otherwise qualifier is not valid
 							if (args[i].startsWith("--")){
-								//Unrecognized qualifier: --<longQualifier>.
-								System.err.println("Unrecognized qualifier: " + args[i] + ".");
+								System.err.println("Unrecognized qualifier: " + args[i] + "."); //print this error if it starts with "--"
 							}
-							else{
-								String errorChar = findWrongQual(args[i]);
-								System.err.println("Unrecognized qualifier " + errorChar + "in " + args[i] + ".");
+							else{ //otherwise it must start with "-"
+								String errorChar = findWrongQual(args[i]); //find the char that is causing the error
+								System.err.println("Unrecognized qualifier " + errorChar + "in " + args[i] + "."); //print error statement
 							}
-							System.exit(-1);
+							System.exit(-1); //exit with proper exit code
 						}
-						b = i;		
+						b = i; //set b copy to i
 					}
 					else{
 						i = args.length + 1; //break out of loop
@@ -111,89 +110,86 @@ public class CmdLine {
 				}
 				b++; //b is now on the first argument that isnt a qualifier;
 				
-				if (args.length == b + 2){
+				if (args.length == b + 2){ //check if the length of args = b + 2
 					userArguments = new String[] {args[b], args[b+1]}; //two arguments
 				}
-				else if (args.length == b + 1){
+				else if (args.length == b + 1){//check if the length of args = b + 1
 					userArguments = new String[] {args[b]}; //one argument
 				}
-				else if (args.length == b){
+				else if (args.length == b){//check if the length of args = b
 					userArguments = new String[] {}; //no arguments
 				}
-				else{
+				else{ //otherwise, user must have entered too many arguments
 					userArguments = new String[] {}; // too many arguments, initialize anyway so we always have it initialized
-					System.err.println("This program takes at most two command line arguments.");
-					printSynopsis();
-					System.exit(-2);
+					System.err.println("This program takes at most two command line arguments."); //print error statement
+					printSynopsis(); //print synopsis
+					System.exit(-2); //exit with proper code
 				}
 				
-				if (askForHelp){ //check flags
-					if (userArguments.equals(null)){
-						printSummary();
-						System.exit(0);
+				if (askForHelp){ //check help flag
+					if (userArguments.equals(null)){ //if the user entered no other arguments
+						printSummary(); //print summary 
+						System.exit(0);//quit
 					}
-					else{
-						System.err.println("Qualifier --help (-h, -?) should not appear with any comand-line arguments.");
-						printSynopsis();
-						System.exit(-4);
+					else{//otherwise the user must have entered an argument with the help qualifier, this causes an error
+						System.err.println("Qualifier --help (-h, -?) should not appear with any command-line arguments."); //print error
+						printSynopsis(); //print synopsis
+						System.exit(-4); //exit with proper code
 					}
 				}
-				if (askForVerbose){
-					Debug.setIsVerbose(true);
-					System.out.println("Verbose on");
+				if (askForVerbose){ //check verbose flag
+					Debug.setIsVerbose(true); //set Verbose to true
+					System.out.println("Verbose on"); //print verbose on
 				}
 
 			}
-			else{ //this else happens if user doesnt enter any qualifiers
-				if (args.length == 0){
-					userArguments = new String[] {};
+			else{ //this else happens if user does not enter any qualifiers
+				if (args.length == 0){ //no arguments given
+					userArguments = new String[] {}; //initialize userArguments as empty
 				}
-				else if (args.length == 1){
-					userArguments = new String[] {args[0]};
+				else if (args.length == 1){ //1 arg
+					userArguments = new String[] {args[0]}; //initialize to one arg array
 				}
-				else if (args.length == 2){
-					userArguments = new String[] {args[0], args[1]};
+				else if (args.length == 2){ // 2 arg
+					userArguments = new String[] {args[0], args[1]};//initialize to two arg array
 				}
 				else{ //too many arguments
-					userArguments = new String[] {};
-					System.err.println("This program takes at most two command line arguments.");
-					printSynopsis();
-					System.exit(-2);
+					userArguments = new String[] {}; //initialize userArguments array anyway so that it is always defined in every case, I know, its dumb.
+					System.err.println("This program takes at most two command line arguments."); //print error
+					printSynopsis(); //print synopsis
+					System.exit(-2); //exit with proper code
 				}
 			}
 			
-			if (userArguments.length == 0){
-				printSynopsis();
-				System.exit(0); //Am I allowed?
+			if (userArguments.length == 0){ //if the arguments length is 0
+				printSynopsis(); //print the synopsis and then exit with no special code
+				System.exit(0); 
 			}
-			else if (userArguments.length == 1){
-				if (userArguments[0].contains(".jar")){
-					r.setUpReflection(userArguments[0], "Commands");
-					mainMenu();
+			else if (userArguments.length == 1){ //check if arguments length is 1
+				if (userArguments[0].contains(".jar")){ //if it is, we check if that one arg inside of it is a mandatory jar file
+					r.setUpReflection(userArguments[0], "Commands"); //send args to reflection
+					mainMenu(); // go to mainMenu
 				}
-				else{
-					System.err.println("This program requires a jar file as the first command line argument (after any qualifiers).");
-					printSynopsis();
-					System.exit(-3);
+				else{//otherwise the user did not enter a jar file
+					System.err.println("This program requires a jar file as the first command line argument (after any qualifiers).");//print error message
+					printSynopsis();//print program info
+					System.exit(-3);//exit with proper code
 				}
 			}
 			else{
-				r.setUpReflection(userArguments[0], userArguments[1]);
-				mainMenu();
+				r.setUpReflection(userArguments[0], userArguments[1]);//otherwise, user must have entered 2 arguments (Too many arguments has already been handled))
+				mainMenu(); //go to main menu
 			}
 
 		}
-		catch(Exception e){
-			//If verbose is on it will print it the stack trace of the given error 
-			if (Debug.isVerbose) { //error begins
+		catch(Exception e){ //catch exception
+			if (Debug.isVerbose) { //check if verbose is set
 				e.printStackTrace();			//prints out specified stack trace from the given error
-				//returns back to normal execution
-				mainMenu();
+				mainMenu();//returns back to main menu
 			}
-			//returns back to normal execution if verbose mode is off 
-			mainMenu();
+			mainMenu();//if we reach here, verbose is off, so we just go back to the main menu normally
 		}
-		mainMenu();
+		mainMenu(); //go to main menu
 	}
 	
 	
@@ -204,21 +200,21 @@ public class CmdLine {
 	 * @return true if valid qualifier, false otherwise
 	 */
 	public static boolean checkValidQual(String qualifier){
-		if (qualifier.toLowerCase().equals("--verbose")){
-			return true;
+		if (qualifier.toLowerCase().equals("--verbose")){ //check if arg == "--verbose"
+			return true; //if the qualifier is --verbose, this is valid
 		}
-		else if (qualifier.toLowerCase().equals("--help")){
-			return true;
+		else if (qualifier.toLowerCase().equals("--help")){ //check if qualifier is --help
+			return true;// return true if it is --help
 		}
-		String validChars = "?vVhH-";
-		for (int i = 0; i < qualifier.length(); i++){
-			char indexChar = qualifier.charAt(i);
-			String indexString = Character.toString(indexChar);
-			if (!validChars.contains(indexString)){
-				return false;
+		String validChars = "?vh-"; //initialize string of valid chars that you can have in a qualifier
+		for (int i = 0; i < qualifier.length(); i++){ //go through each character inside of the qualifier
+			char indexChar = qualifier.charAt(i); //current char inside of the qualifier
+			String indexString = Character.toString(indexChar); //convert char to a 1 element string
+			if (!validChars.contains(indexString)){ //check if the validChars array doesnt have the indexString
+				return false; //if so, invalid
 			}
 		}
-		return true;
+		return true; //otherwise return true;
 	}
 	
 	/**
@@ -227,21 +223,21 @@ public class CmdLine {
 	 * @return true if user has asked for help, false otherwise
 	 */	
 	public static boolean checkHelpQual(String qualifier){
-		if (qualifier.equalsIgnoreCase("--help")){
-				return true;
+		if (qualifier.equalsIgnoreCase("--help")){ //check if qualifier is --help
+				return true; //return true
 		}
-		else if (qualifier.equals("?")){
-			return true;
+		else if (qualifier.equals("?")){ //check if qualifier is ?
+			return true; //return true 
 		}
-		else if(!qualifier.startsWith("--")){
-			if (qualifier.startsWith("-")){
-				if (qualifier.toLowerCase().contains("h")){
-					return true;
+		else if(!qualifier.startsWith("--")){ //check if qualifier doesnt start with --
+			if (qualifier.startsWith("-")){ //check if qualifier starts with - instead. 
+				if (qualifier.contains("h")){ //check if qualifier has "h" inside of it
+					return true; //return true if it does
 				}
 			}
 			
 		}
-		return false;
+		return false; //otherwise we return false
 	}
 	
 	
@@ -251,17 +247,17 @@ public class CmdLine {
 	 * @return true if user has asked for verbose, false otherwise
 	 */	
 	public static boolean checkVerbQual(String qualifier){
-		if (qualifier.equalsIgnoreCase("--verbose")){
-				return true;
+		if (qualifier.equalsIgnoreCase("--verbose")){ //check if qualifier is --verbose
+				return true; //return true
 		}
-		else if(qualifier.toLowerCase().contains("v")){
-			if (qualifier.startsWith("-")){
-				if(!qualifier.startsWith("--")){
-					return true;
+		else if(qualifier.contains("v")){ //check if my qualifier contains v in it
+			if (qualifier.startsWith("-")){ //if it contains v in it and it isnt "--verbose" (handled earlier), then it must start with "-"
+				if(!qualifier.startsWith("--")){ //check if it doesnt start with --
+					return true; //return true
 				}
 			}
 		}
-		return false;
+		return false; //otherwise return false
 
 	}
 	
@@ -271,16 +267,15 @@ public class CmdLine {
 	 * @return errorStr Invalid char the the user entered as an argument in string form
 	 */
 	public static String findWrongQual(String arg){
-		String errChar = "";
-		String validString = new String("-vVhH");
-		for (int x = 0; x < arg.length(); x++){
-			String myString = Character.toString(arg.charAt(x));
-			if (!validString.contains(myString)){
-				errChar = myString;
+		String errChar = ""; //initialize errChar string to empty strng
+		String validString = new String("-vh?"); //initialize validString 
+		for (int x = 0; x < arg.length(); x++){ //loop through qualifier
+			String myString = Character.toString(arg.charAt(x));//initialize myString to the current char within the qualifier
+			if (!validString.contains(myString)){ //check if validStrings doesnt contain the character
+				errChar = myString; //if so, that char is the error causing character
 			}
 		}
-		String errorStr = new String(errChar);
-		return errorStr;
+		return errChar; //return that errorString
 	}
 	
 	
@@ -290,17 +285,18 @@ public class CmdLine {
 	 * -
 	 */
 	public void mainMenu(){
-		Scanner keyboard = new Scanner(System.in);
-		Parser p = new Parser();
-		ParseTree finalAnswer = null;
-		Reflection ref = new Reflection();
-		boolean keepRunningParser = true;
-		if (Debug.isVerbose) { //track code if verbose is on
-			System.out.println("<<< mainMenu() >>>"); //print main menu
+		Scanner keyboard = new Scanner(System.in); //create scanner
+		Parser p = new Parser(); //create parser object
+		ParseTree finalAnswer = null;//set finalAnswer to null
+		Reflection ref = new Reflection(); //create reflection object
+		boolean keepRunningParser = true; //loop boolean
+		
+		if (Debug.isVerbose) { //check if verbose is on
+			System.out.println("<<< mainMenu() >>>"); //if verbose is on, let user know he/she is in mainMenu function by printing
 		}
 		
 		startMessage();	// start up message
-		while (keepRunningParser == true) { 
+		while (keepRunningParser == true) { //while loop depends on the boolean
 			System.out.print("> "); //print this to show that the user needs to provide an input
 			String userIn = keyboard.nextLine(); //get input
 			if (userIn.equals("q")) {			//quit if user input is q
@@ -342,10 +338,10 @@ public class CmdLine {
 								System.out.println(v);
 							}
 							else {
-								System.out.println("Function call returned a null Value."); 	//CHANGE THIS BEFORE SENDING
+								System.out.println("Issue with the functioncall"); 	//CHANGE THIS BEFORE SENDING
 							}
 						} catch (InvalidFunctionCallException e) {
-							int pos = (finalAnswer.head.findExpression(new ParseGrammer().new Expr(e.f)));
+							int pos = (finalAnswer.head.findExpression(new ParseGrammer().new Expr(f)));
 							System.out.println(e.toString() + pos);
 							System.out.println(userIn);
 							for(int i = 0; i < pos; i++)
@@ -374,7 +370,7 @@ public class CmdLine {
 						}
 					}
 					catch(Exception e2){
-						e2.printStackTrace();
+						
 					}
 					
 			}
