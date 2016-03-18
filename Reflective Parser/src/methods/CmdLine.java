@@ -98,7 +98,8 @@ public class CmdLine {
 							}
 							else{ //otherwise it must start with "-"
 								String errorChar = findWrongQual(args[i]); //find the char that is causing the error
-								System.err.println("Unrecognized qualifier " + errorChar + "in " + args[i] + "."); //print error statement
+								System.err.println("Unrecognized qualifier " + errorChar + " in " + args[i] + "."); //print error statement
+								printSynopsis();
 							}
 							System.exit(-1); //exit with proper exit code
 						}
@@ -273,6 +274,7 @@ public class CmdLine {
 			String myString = Character.toString(arg.charAt(x));//initialize myString to the current char within the qualifier
 			if (!validString.contains(myString)){ //check if validStrings doesnt contain the character
 				errChar = myString; //if so, that char is the error causing character
+				break;
 			}
 		}
 		return errChar; //return that errorString
@@ -301,6 +303,7 @@ public class CmdLine {
 			String userIn = keyboard.nextLine(); //get input
 			if (userIn.equals("q")) {			//quit if user input is q
 				keepRunningParser = false; //turn keepRunningParser off so that we quit program and exit this main menu loop.
+				System.exit(0);
 			}
 			else if (userIn.equals("v")) {	//If user input is v, we toggle verbose
 				if (Debug.isVerbose() == false) {	// check if verbose is off
