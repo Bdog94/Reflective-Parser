@@ -303,7 +303,6 @@ public class Reflection {
 		String identifier = f.ident;
 		Value[] vals = new Value[elem_set.length];
 		int i = 0;
-		try {
 			for (Expr e:elem_set){
 				if (e.isValue()){
 					vals[i] = e.value;
@@ -313,10 +312,6 @@ public class Reflection {
 					i++;
 				}
 			}
-			
-		} catch (Exception e){
-			e.printStackTrace();
-		}
 		//set up the ParseGrammar
 		
 		ParseGrammer p = new ParseGrammer();
@@ -327,6 +322,8 @@ public class Reflection {
 		String type = null;
 		int j = 0;
 		for (Value v:vals){
+			if(v!=null)
+			{
 			if (v.isContainFloat()){
 				arguments[j] =new Float( v.val_float);
 				parameters[j] = float.class;
@@ -342,7 +339,7 @@ public class Reflection {
 				parameters[j] = String.class;
 				j++;
 			}
-			
+			}
 		}
 		Method method = null;
 		Class c = o.getClass();
@@ -351,12 +348,14 @@ public class Reflection {
 			method =  c.getMethod(identifier, parameters);
 		}
 		catch( NoSuchMethodException e){
+
 			Class[] parameters2 = new Class[parameters.length];
 			int i2 = 0;
 			for (Class p_2:parameters)
 			{
 				
-				
+				if(type != null)
+				{
 				if (type.equals("float")){
 					parameters2[i2] = Float.class;
 				} else if (type.equals("int")){
@@ -365,13 +364,15 @@ public class Reflection {
 					parameters2[i2] = String.class;
 				}
 				i2++;
-				
+				}
 			}
 			try 
-			{
+			{			
+
 				method = c.getMethod(identifier, parameters2);
 			} catch (Exception e_1){
-			
+			System.out.println(identifier);
+
 			throw new InvalidFunctionCallException("Invalid method called at offset ",f);
 			}
 		} catch (Exception e) {
@@ -394,8 +395,7 @@ public class Reflection {
 			e.printStackTrace();
 		}
 		
-		
-		
+								
 		//Invoke the class here
 		return result;
 		
