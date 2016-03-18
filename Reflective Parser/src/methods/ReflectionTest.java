@@ -199,6 +199,35 @@ public class ReflectionTest extends TestCase{
 		
 	}
 	
+	@Test 
+	public void testFuncallWithaFuncallWithinError() throws InvalidValueException{
+		Reflection r = new Reflection();
+		r.setUpReflection("commands.jar","Commands");
+		ParseGrammer p = new ParseGrammer();
+		
+		Funcall g = p.new Funcall();
+		g.ident = "len";
+		Expr[] g_e = new Expr[] {p.new Expr(p.new Value(new Integer(1)))};
+		g.expr_set = g_e;
+		
+		
+		Funcall f = p.new Funcall();
+		f.ident = "add";
+		Expr[] e = new Expr[] { p.new Expr(p.new Value((Object)(new Integer(1)))), p.new Expr( g )};
+		Value v;
+		boolean test = false;
+		try {
+			v = r.funCall(f, e);
+		} catch (InvalidFunctionCallException e1) {
+			if (e1.f.ident.contains("len"))
+				test = true;
+		}
+		assertTrue(test);
+		
+		//assertEquals(v.val_int, 3);
+	
+	}
+	
 	
 	
 	

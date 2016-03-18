@@ -4,7 +4,7 @@ import methods.ParseGrammer.Funcall;
 
 public class InvalidFunctionCallException extends Exception{
 
-	private Funcall f;
+	public Funcall f;
 
 	public InvalidFunctionCallException(Funcall f) {
 		super();
