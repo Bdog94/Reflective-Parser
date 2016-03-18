@@ -39,12 +39,12 @@ public class Reflection {
 		
 		File f = new File(fileName);
 		
-		/*
+		
 		if (!f.exists()){
 			System.err.print("Could not load jar file: " + fileName);
 			System.exit(-5);
 		}
-		*/
+		
 		
 		URL url = null;
 		
