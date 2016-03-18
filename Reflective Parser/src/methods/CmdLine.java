@@ -344,7 +344,7 @@ public class CmdLine {
 							}
 						} catch (InvalidFunctionCallException e) {
 							int pos = (finalAnswer.head.findExpression(new ParseGrammer().new Expr(e.f)));
-							System.out.println(e.toString() + pos);
+							System.out.println(e.getMessage() + pos);
 							System.out.println(userIn);
 							for(int i = 0; i < pos; i++)
 								System.out.print('-');
