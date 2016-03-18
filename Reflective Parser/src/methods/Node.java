@@ -125,7 +125,7 @@ public class Node {
 	{
 		int targetPosition = -1;
 	
-		if(this.expression.isFunCall())
+		if(this.expression.isFunCall() && target.isFunCall)
 		{
 			if(this.expression.funCall.equals(target.funCall))
 				targetPosition = this.linePosition;
@@ -135,7 +135,7 @@ public class Node {
 					if(targetPosition != -1)
 					break;
 				}}}
-		else
+		else if(target.isValue)
 		{
 			if(this.expression.getValue().equals(target.getValue()))
 			targetPosition = this.linePosition;
