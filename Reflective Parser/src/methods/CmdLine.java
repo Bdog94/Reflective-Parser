@@ -268,6 +268,40 @@ public class CmdLine {
 			else {
 					try{
 						finalAnswer = p.parseLine(userIn); //pass user input int parseLine
+					
+						Node n = finalAnswer.head;
+						
+						Expr expr = (Expr) n.getExpression();
+						
+						Funcall f = expr.getFunCall();
+						Expr[] args = f.expr_set;
+						Value v = null;
+						try {
+							v = r.funCall(expr);
+							if (v != null)
+							{
+								System.out.println(v);
+							}
+							else {
+								System.out.println("Issue with the functioncall"); 	//CHANGE THIS BEFORE SENDING
+							}
+						} catch (InvalidFunctionCallException e) {
+							int pos = (finalAnswer.head.findExpression(new ParseGrammer().new Expr(f)));
+							System.out.println(e.toString() + pos);
+							System.out.println(userIn);
+							for(int i = 0; i < pos; i++)
+								System.out.print('-');
+							System.out.println('^');
+							// TODO Auto-generated catch block
+							if(Debug.isVerbose)
+							{
+								e.printStackTrace();
+							}
+						}
+						 
+						
+						//System.out.println(finalAnswer.toString()); //take final answer and print it while converting it to a string
+
 					}
 					catch(ParseException e){ //exception handling
 						System.out.println(e.getMessage());
@@ -283,39 +317,7 @@ public class CmdLine {
 					catch(Exception e2){
 						
 					}
-					if (finalAnswer != null) {
-						
-						Node n = finalAnswer.head;
-						
-						Expr expr = (Expr) n.getExpression();
-						
-						Funcall f = expr.getFunCall();
-						Expr[] args = f.expr_set;
-						Value v = null;
-						try {
-							v = r.funCall(expr);
-						} catch (InvalidFunctionCallException e) {
-							int pos = (finalAnswer.head.findExpression(new ParseGrammer().new Expr(f)));
-							System.out.println(e.toString() + pos);
-							System.out.println(userIn);
-							for(int i = 0; i < pos; i++)
-								System.out.print('-');
-							System.out.println('^');
-							// TODO Auto-generated catch block
-							if(Debug.isVerbose)
-							{
-								e.printStackTrace();
-							}
-						}
-						if (v != null)
-						{
-							System.out.println(v);
-						} else {
-							System.out.println("Issue with the functioncall"); 	//CHANGE THIS BEFORE SENDING
-						}
-						
-						//System.out.println(finalAnswer.toString()); //take final answer and print it while converting it to a string
-					}
+					
 			}
 		}
 		keyboard.close(); //close scanner object
