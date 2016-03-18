@@ -42,12 +42,27 @@ public class CmdLine {
 	/**
 	 * Prints the synopsis of what the program can do and what commands it may take.
 	 */
+	public static void printSynopsis(){
+		System.out.println("");
+		System.out.println("Synopsis:\n  methods\n  methods { -h | -? | --help }+\n  methods {-v --verbose}* <jar-file> [<class-name>]");
+		System.out.println("Arguments:\n  <jar-file>:   The .jar file that contains the class to load (see next line).\n  <class-name>: The fully qualified class name containing public static command methods to call. [Default=\"Commands\"]");
+		System.out.println("Qualifiers:\n  -v --verbose: Print out detailed errors, warnings, and tracking.\n  -h -? --help: Print out a detailed help message.");
+		System.out.println("Single-char qualifiers may be grouped; long qualifiers may be truncated to unique prefixes and are not case sensitive.");
+	}
+	
+	/**
+	 * This function prints the synopsis with the additional information lines, this function is used when the user asks for help in
+	 * one of his qualifiers
+	 */
 	public static void printSummary(){
 		System.out.println("");
 		System.out.println("Synopsis:\n  methods\n  methods { -h | -? | --help }+\n  methods {-v --verbose}* <jar-file> [<class-name>]");
 		System.out.println("Arguments:\n  <jar-file>:   The .jar file that contains the class to load (see next line).\n  <class-name>: The fully qualified class name containing public static command methods to call. [Default=\"Commands\"]");
 		System.out.println("Qualifiers:\n  -v --verbose: Print out detailed errors, warnings, and tracking.\n  -h -? --help: Print out a detailed help message.");
 		System.out.println("Single-char qualifiers may be grouped; long qualifiers may be truncated to unique prefixes and are not case sensitive.");
+		System.out.println("");
+		System.out.println("This program interprets commands of the format '(<method> {arg}*)' on the command line, finds corresponding");
+		System.out.println("methods in <class-name>, and executes them, printing the result to sysout.");
 	}
 	
 	
@@ -57,74 +72,116 @@ public class CmdLine {
 	 */
 	public void argChecker(String[] args){
 		try{
-			if (args.length == 0){
-				printSummary();
-			}
-			if (args.length == 1){ //check if length of arg is 1
-				if (!checkHelp(args) && !checkVerb(args)){ //if the length is 1 and the first argument doesnt ask for help or verbose.
-					if (!args[0].contains(".jar")){ //check if the argument doesnt contains ".jar"
-						System.err.println("This program requires a jar file as the first command line argument (after any qualifiers)."); 
-						printSummary();
-						System.exit(-3);
+			//initialize variables
+			int i; // for loop counter
+			int b = 0; // for loop counter copy 
+			boolean askForHelp = false; //help flag
+			boolean askForVerbose = false; //verbose flag
+			String tempString; //temporary string for current argument
+			String[] userArguments;
+
+			if (args[0].startsWith("-")){ //if user has a qualifier, handle them
+				for (i = 0; i < args.length; i++){
+					if (args[i].startsWith("--") || args[i].startsWith("-")){
+						tempString = args[i];
+						if (checkValidQual(tempString)){
+							if (checkVerbQual(tempString)){
+								askForVerbose = true;
+							}
+							if(checkHelpQual(tempString)){
+								askForHelp = true;
+							}
+						}
+						else{
+							if (args[i].startsWith("--")){
+								//Unrecognized qualifier: --<longQualifier>.
+								System.err.println("Unrecognized qualifier: " + args[i] + ".");
+							}
+							else{
+								String errorChar = findWrongQual(args[i]);
+								System.err.println("Unrecognized qualifier " + errorChar + "in " + args[i] + ".");
+							}
+							System.exit(-1);
+						}
+						b = i;		
 					}
 					else{
-						r.setUpReflection(args[1], "Commands"); //if we reach here, we know that ".jar" is in the file, so we set it up with commands
-						mainMenu(); 
+						i = args.length + 1; //break out of loop
 					}
 				}
+				b++; //b is now on the first argument that isnt a qualifier;
+				
+				if (args.length == b + 2){
+					userArguments = new String[] {args[b], args[b+1]}; //two arguments
+				}
+				else if (args.length == b + 1){
+					userArguments = new String[] {args[b]}; //one argument
+				}
+				else if (args.length == b){
+					userArguments = new String[] {}; //no arguments
+				}
+				else{
+					userArguments = new String[] {}; // too many arguments, initialize anyway so we always have it initialized
+					System.err.println("This program takes at most two command line arguments.");
+					printSynopsis();
+					System.exit(-2);
+				}
+				
+				if (askForHelp){ //check flags
+					if (userArguments.equals(null)){
+						printSummary();
+						System.exit(0);
+					}
+					else{
+						System.err.println("Qualifier --help (-h, -?) should not appear with any comand-line arguments.");
+						printSynopsis();
+						System.exit(-4);
+					}
+				}
+				if (askForVerbose){
+					Debug.setIsVerbose(true);
+					System.out.println("Verbose on");
+				}
+
 			}
-			if ((args.length == 2) && args[1].contains(".jar")){ //if length of args is 2 and the 2nd arg contains ".jar"
-				if (checkVerb(args)){ //check if user asks for verbose
-					Debug.setIsVerbose(true); //set verbose to true if he/she does
+			else{ //this else happens if user doesnt enter any qualifiers
+				if (args.length == 0){
+					userArguments = new String[] {};
 				}
-				if (checkHelp(args)){ //check if user asks for help
-					printSummary(); //print summary if the user does ask for help
+				else if (args.length == 1){
+					userArguments = new String[] {args[0]};
 				}
-				r.setUpReflection(args[1], "Commands"); //set reflection up with "Commands.java" as default class.
-				mainMenu();
+				else if (args.length == 2){
+					userArguments = new String[] {args[0], args[1]};
+				}
+				else{ //too many arguments
+					userArguments = new String[] {};
+					System.err.println("This program takes at most two command line arguments.");
+					printSynopsis();
+					System.exit(-2);
+				}
+			}
 			
+			if (userArguments.length == 0){
+				printSynopsis();
+				System.exit(0); //Am I allowed?
 			}
-			if ((args.length == 2 && !args[1].contains(".jar"))){ //chec kif the args has length 2 and it the 2nd arg doesnt contain ".jar"
-				System.err.println("This program requires a jar file as the first command line argument (after any qualifiers).");
-				printSummary();
-				System.exit(-3);
-			}
-			if (args.length > 3){//if user enters more than 3 arguments
-				System.err.print("This program takes at most two command line arguments.");
-				printSummary();
-				System.exit(-2);
-			}
-			if (checkValid(args) == false){ //if the first argument that the user entered is invalid
-				if (args[0].startsWith("--")){ //check to see if the first arg starts with "--"
-					System.err.println("Unrecognized qualifier: " + args[0]); 
-					printSummary();
-					System.exit(-1);
+			else if (userArguments.length == 1){
+				if (userArguments[0].contains(".jar")){
+					r.setUpReflection(userArguments[0], "Commands");
+					mainMenu();
 				}
-				else{ //if we reach here, the first arg doesnt start with "--"
-					String errorChar = findWrongQual(args[0]);
-					System.err.println("Unrecognized qualifier '" + errorChar + "' in '" + args[0] + "'");
-					printSummary();
-					System.exit(-1);
+				else{
+					System.err.println("This program requires a jar file as the first command line argument (after any qualifiers).");
+					printSynopsis();
+					System.exit(-3);
 				}
 			}
-			if(checkHelp(args) && args.length != 1){ //check to see if the user asks for help and it the arg length is not 1
-				System.err.println("Qualifier --help (-h, -?) should not appear with any comand-line arguments.");
-				printSummary();
-				System.exit(-4);
+			else{
+				r.setUpReflection(userArguments[0], userArguments[1]);
+				mainMenu();
 			}
-			if(checkHelp(args)){ //check to see if the user asks for  help
-				printSummary(); //if user asks for help, give info
-				System.exit(0);
-			}
-			if (checkVerb(args)){ //check to see if the user asks for verbose mode
-				if (args.length == 3){ //if the args.length is 3, we can set up the reflection 
-					r.setUpReflection(args[1], args[2]);
-				}
-				else{ //otherwise it is invalid
-					System.err.println("Invalid"); //print invalid
-					System.exit(0); //no special exit code
-				}
-			}
+
 		}
 		catch(Exception e){
 			//If verbose is on it will print it the stack trace of the given error 
@@ -141,24 +198,21 @@ public class CmdLine {
 	
 	
 	
-/**
- * This method will take the list of arguments given to the program and determine of they are valid, the arguments are valid if the first 
- * argument contains only v, V, h, H, or -. 	
- * @param args arguments user used when running program
- * @return true if first argument is valid, false otherwise
- */
-	public static boolean checkValid(String[] args){
-		if (args[0].startsWith("--")){
-			if ((args[0].equals("--verbose")) || (args[0].equals("--help"))){
-				return true;
-			}
-			else{
-				return false;
-			}
+	/**
+	 * This function will check to see if a qualifier from the command line is valid
+	 * @param qualifier
+	 * @return true if valid qualifier, false otherwise
+	 */
+	public static boolean checkValidQual(String qualifier){
+		if (qualifier.toLowerCase().equals("--verbose")){
+			return true;
 		}
-		String validChars = "vVhH-";
-		for (int i = 0; i < args[0].length(); i++){
-			char indexChar = args[0].charAt(i);
+		else if (qualifier.toLowerCase().equals("--help")){
+			return true;
+		}
+		String validChars = "?vVhH-";
+		for (int i = 0; i < qualifier.length(); i++){
+			char indexChar = qualifier.charAt(i);
 			String indexString = Character.toString(indexChar);
 			if (!validChars.contains(indexString)){
 				return false;
@@ -168,43 +222,48 @@ public class CmdLine {
 	}
 	
 	/**
-	 * This function will check to see if the user has entered "--help", "?" or "-h" as the first command line argument
-	 * @param args arguments user has entered with the program in the command line
+	 * This function will check to see if the user has entered "--help", "?" or "-h" as a qualifier command line argument
+	 * @param args
 	 * @return true if user has asked for help, false otherwise
-	 */
-	public static boolean checkHelp(String[] myArg){
-		if (myArg[0].equals("--help")){
+	 */	
+	public static boolean checkHelpQual(String qualifier){
+		if (qualifier.equalsIgnoreCase("--help")){
+				return true;
+		}
+		else if (qualifier.equals("?")){
 			return true;
 		}
-		else if (myArg[0].equals("?")){
-			return true;
+		else if(!qualifier.startsWith("--")){
+			if (qualifier.startsWith("-")){
+				if (qualifier.toLowerCase().contains("h")){
+					return true;
+				}
+			}
+			
 		}
-		else if((myArg[0].contains("h")) || (myArg[0].contains("H"))){
-			return true;
-		}
-		else{
-			return false;
-		}
+		return false;
 	}
+	
 	
 	/**
-	 * This method will check to see if the user has v as 
-	 * @param args arguments user has entered in the command line 
-	 * @return true if user asks for verbose, false otherwise
-	 */
-	
-	public static boolean checkVerb(String[] args){
-		if (args[0].toLowerCase().equals("--verbose")){
-			return true;
+	 * This function will check to see if the user has entered "--verbose", or "-v" as a qualifier command line argument
+	 * @param qualifier
+	 * @return true if user has asked for verbose, false otherwise
+	 */	
+	public static boolean checkVerbQual(String qualifier){
+		if (qualifier.equalsIgnoreCase("--verbose")){
+				return true;
 		}
-		if (args[0].contains("v") || args[0].contains("V")){
-			return true;
+		else if(qualifier.toLowerCase().contains("v")){
+			if (qualifier.startsWith("-")){
+				if(!qualifier.startsWith("--")){
+					return true;
+				}
+			}
 		}
-		else{
-			return false;
-		}
+		return false;
+
 	}
-	
 	
 	/**
 	 * This function will find a an invalid character inside of the first user argument
@@ -250,9 +309,11 @@ public class CmdLine {
 			else if (userIn.equals("v")) {	//If user input is v, we toggle verbose
 				if (Debug.isVerbose() == false) {	// check if verbose is off
 					Debug.setIsVerbose(true);		//if verbose is off, we toggle it by turning it on
+					System.out.println("Verbose on");
 				} 
 				else {
 					Debug.setIsVerbose(false);			//otherwise, verbose must be on, so we just turn it off
+					System.out.println("Verbose off");
 				}
 			} 
 			else if (userIn.equals("f")) {		//If user input is f, we display the functions
@@ -261,9 +322,7 @@ public class CmdLine {
 				
 			} 
 			else if (userIn.equals("?")){
-				printSummary();
-				
-				
+				startMessage();	
 			}
 			else {
 					try{
