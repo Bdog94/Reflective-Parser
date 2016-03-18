@@ -341,7 +341,7 @@ public class CmdLine {
 								System.out.println("Issue with the functioncall"); 	//CHANGE THIS BEFORE SENDING
 							}
 						} catch (InvalidFunctionCallException e) {
-							int pos = (finalAnswer.head.findExpression(new ParseGrammer().new Expr(f)));
+							int pos = (finalAnswer.head.findExpression(new ParseGrammer().new Expr(e.f)));
 							System.out.println(e.toString() + pos);
 							System.out.println(userIn);
 							for(int i = 0; i < pos; i++)
