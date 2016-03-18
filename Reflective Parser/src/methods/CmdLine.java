@@ -332,6 +332,8 @@ public class CmdLine {
 						
 						Expr expr = (Expr) n.getExpression();
 						
+						if(expr.isFunCall)
+						{
 						Funcall f = expr.getFunCall();
 						Expr[] args = f.expr_set;
 						Value v = null;
@@ -357,7 +359,11 @@ public class CmdLine {
 								e.printStackTrace();
 							}
 						}
-						 
+						}
+						else
+						{
+							System.out.println(expr.value);
+						}
 						
 						//System.out.println(finalAnswer.toString()); //take final answer and print it while converting it to a string
 
