@@ -371,7 +371,7 @@ public class Reflection {
 
 				method = c.getMethod(identifier, parameters2);
 			} catch (Exception e_1){
-			throw new InvalidFunctionCallException("Invalid method called at offset ",f);
+			throw new InvalidFunctionCallException("Invalid method called ",f, vals);
 			}
 		} catch (Exception e) {
 			

@@ -71,6 +71,10 @@ public class CmdLine {
 	 * @param args - arguments that the user has decided to put inside of the command line when running program
 	 */
 	public void argChecker(String[] args){
+		if (args.length == 0){
+			printSynopsis();
+			System.exit(0);
+		}
 		try{
 			//initialize variables
 			int i; // for loop counter
@@ -347,7 +351,7 @@ public class CmdLine {
 							}
 						} catch (InvalidFunctionCallException e) {
 							int pos = (finalAnswer.head.findExpression(new ParseGrammer().new Expr(e.f)));
-							System.out.println(e.getMessage() + pos);
+							System.out.println(e.getMessage() + e.getMethod() +  " at offset " + pos);
 							System.out.println(userIn);
 							for(int i = 0; i < pos; i++)
 								System.out.print('-');
@@ -355,7 +359,7 @@ public class CmdLine {
 							// TODO Auto-generated catch block
 							if(Debug.isVerbose)
 							{
-								e.printStackTrace();
+								e.printStackTrace(System.out);
 							}
 						}
 						}
@@ -375,7 +379,7 @@ public class CmdLine {
 						}
 						System.out.println("^");
 						if (Debug.isVerbose){
-							e.printStackTrace();
+							e.printStackTrace(System.out);
 						}
 					}
 					catch(Exception e2){
