@@ -19,13 +19,14 @@ public class Parser {
 	private String input;
 	private int position;
 
-
 	/**
 	 * Takes a string and parses it into it's expressions
 	 * 
-	 * @param input = a string to be parsed
+	 * @param input
+	 *            = a string to be parsed
 	 * @return a ParseTree containing the parsed input
-	 * @throws ParseException if the input line is improperly formatted
+	 * @throws ParseException
+	 *             if the input line is improperly formatted
 	 */
 	public ParseTree parseLine(String input) throws ParseException {
 		ParseTree parsedInput = new ParseTree();
@@ -93,8 +94,22 @@ public class Parser {
 					this.position++;
 					break;
 				case '"':
-					if(input.indexOf('"', this.position + 1) == -1)
-						throw new ParseException("Encountered end-of-input while reading string beginning at offset " + this.position + " and ending at offset " + input.length(), input.length());
+					if (input.indexOf('"', this.position + 1) == -1)
+					{		throw new ParseException(
+								"Encountered end-of-input while reading string beginning at offset "
+										+ this.position
+										+ " and ending at offset "
+										+ input.length(), input.length());
+					}
+					else 
+					{
+						n.addExpression(new Node(convertToValue((input
+							.substring(this.position,
+									input.indexOf('"', this.position + 1)+ 1))),
+							this.position));
+					this.position = input.indexOf('"', this.position + 1) + 1;
+					}
+					break;
 				// A value was found, get it and convert it to an actual value
 				default:
 					// determine where the end of the value is (ends when a
@@ -132,6 +147,7 @@ public class Parser {
 							position);
 			}
 		}
+
 
 	}
 
@@ -199,21 +215,20 @@ public class Parser {
 		ParseGrammer p = new ParseGrammer();
 		ParseGrammer.Expr converted = null;
 		ParseGrammer.Value val;
-
+		
 		char first = target.charAt(0);
-		char second;
-
-		//if the input string is more than one character
-		if (target.length() > 1)
-			second = target.charAt(1);
-		else if (target.charAt(0) >= '0' && target.charAt(0) <= '9')
-			second = '\0';
-		else
+		
+		// if the input string is more than one character
+		if (!(target.length() > 1 || (target.charAt(0) >= '0' && target.charAt(0) <= '9')))
 			throw new ParseException("Invalid value", position);
-		if (first == '"' && target.charAt(target.length() - 1) == '"') {
-			val = new ParseGrammer().new Value(target);
+		
+		if (first == '"' && target.charAt(target.length()-1) == '"') 
+		{
+			
+			val = new ParseGrammer().new Value(target.substring(1, target.length()-1));
 			converted = new ParseGrammer().new Expr(val);
-		} else {
+		}
+		else {
 			// make a Scanner to scan for ints and floats
 			Scanner converter = new Scanner(target);
 			// if there is an int, get it out and make the value with it
@@ -240,8 +255,11 @@ public class Parser {
 	}
 
 	/**
-	 * Finishes the creation of all FunCalls by filling in the Expr_set and the numExpressions
-	 * @param n a node in the tree, which will be traversed
+	 * Finishes the creation of all FunCalls by filling in the Expr_set and the
+	 * numExpressions
+	 * 
+	 * @param n
+	 *            a node in the tree, which will be traversed
 	 */
 	private void generateFuncallInfo(Node n) {
 		if (n.getExpression().isFunCall) {
@@ -250,7 +268,7 @@ public class Parser {
 			n.getExpression().getFunCall().setNumOfExpr(n.numExpressions());
 			for (int i = 0; i < n.numExpressions(); i++) {
 				if (n.findSubExpr(i).getExpression().isFunCall())
-					//generate the funcall info for a sub-function call
+					// generate the funcall info for a sub-function call
 					generateFuncallInfo(n.findSubExpr(i));
 				sub_expr[i] = n.findSubExpr(i).getExpression();
 			}
