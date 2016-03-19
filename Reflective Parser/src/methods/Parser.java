@@ -60,13 +60,13 @@ public class Parser {
 
 		if (input.indexOf(' ', this.position) == input.indexOf(')',
 				this.position) || input.indexOf(')', this.position) < 0)
-			throw new ParseException("Improper function call syntax",
+			throw new ParseException("Improper function call syntax at offset ",
 					input.length());
 		if (input.indexOf(' ', this.position) == -1
 				&& input.indexOf(')', this.position) != -1) {
 			if (input.substring(this.position,
 					input.indexOf(')', this.position)).isEmpty())
-				throw new ParseException("Empty function call found.", position);
+				throw new ParseException("Empty function call found  at offset ", position);
 			n = new Node(convertToFuncall(input.substring(this.position,
 					input.indexOf(')', this.position))), this.position);
 			this.position = input.indexOf(')', this.position) + 1;
@@ -143,7 +143,7 @@ public class Parser {
 				// input line
 				if (input.length() <= this.position)
 					throw new ParseException(
-							"Input line ended before the end of a function call was found",
+							"Input line ended before the end of a function call was found at offset ",
 							position);
 			}
 		}
@@ -175,12 +175,12 @@ public class Parser {
 				// if not, throw an exception
 				if (isAlphanumeric(c))
 					continue;
-				throw new ParseException("Invalid identifier format", position);
+				throw new ParseException("Unexpected symbol in function name at offset ", position);
 			}
 			converted = new ParseGrammer().new Expr(
 					new ParseGrammer().new Funcall(target));
 		} else {
-			throw new ParseException("Invalid identifier format", position);
+			throw new ParseException("Unexpected symbol in function name at offset ", position);
 		}
 		return converted;
 	}
@@ -220,7 +220,7 @@ public class Parser {
 		
 		// if the input string is more than one character
 		if (!(target.length() > 1 || (target.charAt(0) >= '0' && target.charAt(0) <= '9')))
-			throw new ParseException("Invalid value", position);
+			throw new ParseException("Invalid value at offset ", position);
 		
 		if (first == '"' && target.charAt(target.length()-1) == '"') 
 		{
@@ -248,7 +248,7 @@ public class Parser {
 
 			} else {
 				converter.close();
-				throw new ParseException("Invalid value", position);
+				throw new ParseException("Invalid value at offset ", position);
 			}
 		}
 		return converted;

@@ -372,7 +372,7 @@ public class CmdLine {
 
 					}
 					catch(ParseException e){ //exception handling
-						System.out.println(e.getMessage());
+						System.out.println(e.getMessage() + e.getErrorOffset());
 						System.out.println(userIn);
 						for (int i = 0; i < e.getErrorOffset(); i++){
 							System.out.print("-");
